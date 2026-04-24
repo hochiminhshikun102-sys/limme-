@@ -1912,6 +1912,9 @@ function initWardrobePage() {
   });
 }
 
+/** 私密男友共用头像；替换 `assets/bf-companion.png` 即可换成你提供的照片 */
+const BF_SHARED_AVATAR = "./assets/bf-companion.png?v=1";
+
 const BF_PERSONAS = [
   {
     id: "lu_yu",
@@ -1974,7 +1977,7 @@ const bfOpenAiTipEl = document.getElementById("bf-open-ai-tip");
 const bfPanelPickEl = document.getElementById("bf-panel-pick");
 const bfPanelRoomEl = document.getElementById("bf-panel-room");
 const bfPersonaGridEl = document.getElementById("bf-persona-grid");
-const bfRoomAvatarEl = document.getElementById("bf-room-avatar");
+const bfRoomAvatarImgEl = document.getElementById("bf-room-avatar-img");
 const bfRoomNameEl = document.getElementById("bf-room-name");
 const bfRoomTagEl = document.getElementById("bf-room-tag");
 const bfChangePartnerEl = document.getElementById("bf-change-partner");
@@ -2061,7 +2064,7 @@ function openBoyfriendRoom(persona) {
   bfActiveId = persona.id;
   bfThread.length = 0;
   bfLastAiText = "";
-  if (bfRoomAvatarEl) bfRoomAvatarEl.textContent = persona.emoji;
+  if (bfRoomAvatarImgEl) bfRoomAvatarImgEl.src = BF_SHARED_AVATAR;
   if (bfRoomNameEl) bfRoomNameEl.textContent = persona.name;
   if (bfRoomTagEl) bfRoomTagEl.textContent = persona.tag;
   if (bfChatScrollEl) bfChatScrollEl.innerHTML = "";
@@ -2081,7 +2084,7 @@ function renderBoyfriendPersonaCards() {
     btn.className = "bf-persona-card";
     btn.dataset.bfPersona = p.id;
     btn.setAttribute("role", "listitem");
-    btn.innerHTML = `<div class="bf-persona-avatar" aria-hidden="true">${p.emoji}</div><div class="bf-persona-name">${p.name}</div><div class="bf-persona-tag">${p.tag}</div>`;
+    btn.innerHTML = `<div class="bf-persona-avatar" aria-hidden="true"><img src="${BF_SHARED_AVATAR}" alt="" width="52" height="52" loading="lazy" decoding="async"></div><div class="bf-persona-name">${p.name}</div><div class="bf-persona-tag">${p.tag}</div>`;
     btn.addEventListener("click", () => openBoyfriendRoom(p));
     bfPersonaGridEl.appendChild(btn);
   });
