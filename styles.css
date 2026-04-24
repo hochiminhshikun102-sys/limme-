@@ -64,60 +64,68 @@ body {
   text-align: center;
   background: #f6edf3;
   margin: 0 -16px 0;
-  padding: 26px 18px 18px;
+  padding: 24px 18px 18px;
 }
 
 .hero-avatar {
-  width: 128px;
-  height: 128px;
+  width: 122px;
+  height: 122px;
   margin: 0 auto;
   border-radius: 50%;
-  border: 6px solid #fff;
-  background: linear-gradient(145deg, #f6d7e7, #cfe7fb);
+  border: 5px solid #fff;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(216, 156, 184, 0.22);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
-  color: #2e3750;
-  font-weight: 700;
+}
+
+.hero-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .online-badge {
-  margin: -8px auto 10px;
-  width: 50px;
+  margin: -7px auto 11px;
+  width: 48px;
   border-radius: 999px;
   color: #fff;
   background: #16c563;
   padding: 4px 0;
-  font-size: 14px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .home-hero h2 {
-  margin-top: 6px;
-  font-size: 42px;
+  margin-top: 2px;
+  font-size: 22px;
+  color: #2e3442;
 }
 
 .home-hero p {
   color: #7a7682;
-  font-size: 16px;
-  margin-top: 4px;
+  font-size: 14px;
+  margin-top: 6px;
 }
 
 .voice-btn {
-  margin-top: 14px;
+  margin-top: 12px;
   border: none;
   border-radius: 999px;
   background: #f47fa8;
   color: #fff;
-  font-size: 20px;
-  padding: 12px 30px;
+  font-size: 15px;
+  padding: 11px 24px;
+  font-weight: 600;
   cursor: pointer;
+  box-shadow: 0 8px 14px rgba(244, 127, 168, 0.32);
 }
 
 .chat-card {
-  margin-top: 14px;
+  margin-top: 10px;
   background: #f9f0f5;
-  border: none;
+  border: 1px solid #f3e6ed;
 }
 
 .chat-list {
@@ -129,7 +137,7 @@ body {
   max-width: 86%;
   padding: 12px 14px;
   border-radius: 16px;
-  font-size: 18px;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -342,7 +350,7 @@ body {
 
 .quick-item em {
   font-style: normal;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .section-title {
@@ -378,14 +386,14 @@ body {
 
 .service-card strong {
   display: block;
-  font-size: 20px;
+  font-size: 25px;
 }
 
 .service-card small {
   display: block;
   margin-top: 6px;
   opacity: 0.92;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .card-pink { background: linear-gradient(135deg, #f18eb5, #8cb8f4); }
