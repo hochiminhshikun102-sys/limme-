@@ -1917,10 +1917,22 @@ function initWardrobePage() {
   });
 }
 
-const BF_AVATAR_VER = "20260425v2";
+const BF_AVATAR_VER = "20260426p2";
+
+/**
+ * GitHub Pages 项目站位于 /仓库名/ 下时，若入口 URL 缺少尾部斜杠，或部分内置浏览器解析异常，
+ * 相对路径 `./assets/...` 可能错解析到 `github.io/assets/...` 而 404。此处用 pathname 拼出站点根前缀。
+ */
+function limmeAssetBase() {
+  if (typeof location === "undefined") return "./";
+  if (location.protocol === "file:") return "./";
+  let path = location.pathname.replace(/\/index\.html?$/i, "");
+  if (!path || path === "/") return "/";
+  return path.endsWith("/") ? path : `${path}/`;
+}
 
 function bfAvatarUrl(fileName) {
-  return `./assets/${fileName}?v=${BF_AVATAR_VER}`;
+  return `${limmeAssetBase()}assets/${fileName}?v=${BF_AVATAR_VER}`;
 }
 
 function preloadBoyfriendAvatars() {
@@ -2008,6 +2020,10 @@ const bfInputEl = document.getElementById("bf-input");
 const bfSendEl = document.getElementById("bf-send");
 const bfSpeakLastEl = document.getElementById("bf-speak-last");
 const bfSuggestLineEl = document.getElementById("bf-suggest-line");
+
+if (bfRoomAvatarImgEl) {
+  bfRoomAvatarImgEl.src = bfAvatarUrl("bf-v2-lu-yu.png");
+}
 
 function appendBfBubble(text, role = "ai") {
   if (!bfChatScrollEl || !text) return;
