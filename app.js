@@ -15,7 +15,9 @@ const pages = [
   "health-weight",
   "health-cycle",
   "health-breathe",
-  "health-medicine"
+  "health-medicine",
+  "homecare",
+  "yoga"
 ];
 
 let healthBreatheTimer = null;
@@ -38,10 +40,6 @@ const aiModelEl = document.getElementById("ai-model");
 const aiKeyEl = document.getElementById("ai-key");
 const aiSaveBtnEl = document.getElementById("ai-save-btn");
 const brandHomeBtnEl = document.getElementById("brand-home-btn");
-const hotServiceTitleEl = document.getElementById("hot-service-title");
-const hotServiceContentEl = document.getElementById("hot-service-content");
-const hotServiceMainActionEl = document.getElementById("hot-service-main-action");
-const hotServiceSubActionEl = document.getElementById("hot-service-sub-action");
 const clinicTitleEl = document.getElementById("clinic-title");
 const clinicListEl = document.getElementById("clinic-list");
 const flowTitleEl = document.getElementById("flow-title");
@@ -79,32 +77,28 @@ const scriptedChat = [
   { role: "user", text: "立即开始" }
 ];
 
-const hotServiceMap = {
-  medical: {
-    title: "轻医美项目",
-    rows: ["肤质分析与项目匹配", "数字人医生初筛面诊", "治疗周期与报价透明展示"],
-    mainAction: "预约医美面诊",
-    subAction: "查看项目清单"
-  },
-  tcm: {
-    title: "中医调理",
-    rows: ["体质问询与睡眠评估", "食疗/理疗方案组合推荐", "支持到院与滋补品联动下单"],
-    mainAction: "进入中医问诊",
-    subAction: "查看调理方案"
-  },
-  homecare: {
-    title: "上门服务",
-    rows: ["上门推拿、按摩、康养", "按区域与时段智能排班", "服务前后提醒与评价闭环"],
-    mainAction: "立即预约上门",
-    subAction: "查看服务套餐"
-  },
-  yoga: {
-    title: "瑜伽课程",
-    rows: ["线上课程随时练", "线下场馆一键预约", "按体态目标生成课程计划"],
-    mainAction: "进入课程中心",
-    subAction: "查看课表"
-  }
-};
+const HOMECARE_CATALOG = [
+  { tab: "按摩", title: "舒缓全身按摩", meta: "全身精油 · 轻柔手法", hint: "60分钟", btnLabel: "预约", cta: "book" },
+  { tab: "推拿", title: "肩颈推拿", meta: "缓解久坐酸胀", hint: "60分钟", btnLabel: "预约", cta: "book" },
+  { tab: "推拿", title: "肩颈推拿", meta: "进阶力度 · 需师傅评估", hint: "30分钟", btnLabel: "中阶", cta: "level" },
+  { tab: "SPA", title: "香薰舒压 SPA", meta: "玫瑰海盐热敷", hint: "90分钟", btnLabel: "预约", cta: "book" },
+  { tab: "SPA", title: "足部精护", meta: "热敷泡脚 + 修形护理", hint: "45分钟", btnLabel: "预约", cta: "book" },
+  { tab: "按摩", title: "运动恢复按摩", meta: "筋膜放松 · 适合运动后", hint: "45分钟", btnLabel: "预约", cta: "book" },
+  { tab: "康复", title: "腰部调理推拿", meta: "师傅持证 · 可预约上门", hint: "50分钟", btnLabel: "预约", cta: "book" },
+  { tab: "按摩", title: "头部舒缓按摩", meta: "减压助眠", hint: "30分钟", btnLabel: "预约", cta: "book" }
+];
+
+const YOGA_CATALOG = [
+  { tab: "线上", title: "晨间唤醒流瑜伽", meta: "720P 跟练 · 零基础友好", hint: "40分钟 · ¥29", cta: "book" },
+  { tab: "线上", title: "腰腹核心塑形", meta: "垫上训练 · 讲解细致", hint: "35分钟 · ¥39", cta: "book" },
+  { tab: "线下", title: "肩颈放松瑜伽", meta: "小班 8 人内 · 场馆地暖", hint: "¥299 / 节", cta: "book" },
+  { tab: "线下", title: "阴瑜伽深度拉伸", meta: "辅具齐全 · 放松筋膜", hint: "¥259 / 节", cta: "book" },
+  { tab: "私教", title: "体态矫正一对一", meta: "含课前评估与计划", hint: "¥499 / 节", cta: "book" },
+  { tab: "私教", title: "孕产温和瑜伽", meta: "需提前预约评估", hint: "¥599 / 节", cta: "book" }
+];
+
+let homecareActiveTab = "按摩";
+let yogaActiveTab = "线上";
 
 const clinicData = {
   beauty: {
@@ -753,31 +747,129 @@ function openHotServicePanel(key) {
     switchPage("tcmflow");
     return;
   }
+  if (key === "homecare") {
+    switchPage("homecare");
+    return;
+  }
+  if (key === "yoga") {
+    switchPage("yoga");
+    return;
+  }
+}
 
-  const cfg = hotServiceMap[key];
-  if (!cfg || !hotServiceTitleEl || !hotServiceContentEl) return;
+function svcThumbUrl() {
+  return `${limmeAssetBase()}assets/xiaomei-avatar.png?v=6`;
+}
 
-  hotServiceTitleEl.textContent = cfg.title;
-  hotServiceContentEl.innerHTML = "";
-  cfg.rows.forEach((row) => {
-    const item = document.createElement("div");
-    item.className = "list-row";
-    item.textContent = row;
-    hotServiceContentEl.appendChild(item);
+function renderHomecareList() {
+  const list = document.getElementById("homecare-list");
+  if (!list) return;
+  const items = HOMECARE_CATALOG.filter((x) => x.tab === homecareActiveTab);
+  list.innerHTML = "";
+  items.forEach((item) => {
+    const row = document.createElement("article");
+    row.className = "svc-card";
+    const isLevel = item.cta === "level";
+    const thumb = document.createElement("img");
+    thumb.className = "svc-card-img";
+    thumb.src = svcThumbUrl();
+    thumb.alt = "";
+    const body = document.createElement("div");
+    body.className = "svc-card-body";
+    body.innerHTML = `<strong class="svc-card-title"></strong><p class="svc-card-meta"></p><p class="svc-card-hint"></p>`;
+    body.querySelector(".svc-card-title").textContent = item.title;
+    body.querySelector(".svc-card-meta").textContent = item.meta;
+    body.querySelector(".svc-card-hint").textContent = item.hint;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = isLevel ? "svc-card-btn svc-card-btn--muted" : "svc-card-btn";
+    btn.textContent = item.btnLabel;
+    btn.addEventListener("click", () => {
+      if (isLevel) showToast(`已选择「${item.btnLabel}」· ${item.title}，稍后会有顾问联系确认。`);
+      else showToast(`预约已提交：${item.title}（示意），可在「预约记录」查看进度。`);
+    });
+    row.append(thumb, body, btn);
+    list.appendChild(row);
   });
+}
 
-  if (hotServiceMainActionEl) {
-    hotServiceMainActionEl.textContent = cfg.mainAction;
-    hotServiceMainActionEl.onclick = () => {
-      showToast(`${cfg.mainAction} 已打开`);
-    };
-  }
-  if (hotServiceSubActionEl) {
-    hotServiceSubActionEl.textContent = cfg.subAction;
-    hotServiceSubActionEl.onclick = () => showToast(`${cfg.subAction} 已打开`);
-  }
+function renderYogaList() {
+  const list = document.getElementById("yoga-list");
+  if (!list) return;
+  const items = YOGA_CATALOG.filter((x) => x.tab === yogaActiveTab);
+  list.innerHTML = "";
+  items.forEach((item) => {
+    const row = document.createElement("article");
+    row.className = "svc-card";
+    const thumb = document.createElement("img");
+    thumb.className = "svc-card-img";
+    thumb.src = svcThumbUrl();
+    thumb.alt = "";
+    const body = document.createElement("div");
+    body.className = "svc-card-body";
+    body.innerHTML = `<strong class="svc-card-title"></strong><p class="svc-card-meta"></p><p class="svc-card-hint"></p>`;
+    body.querySelector(".svc-card-title").textContent = item.title;
+    body.querySelector(".svc-card-meta").textContent = item.meta;
+    body.querySelector(".svc-card-hint").textContent = item.hint;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "svc-card-btn";
+    btn.textContent = "预约";
+    btn.addEventListener("click", () => {
+      showToast(`课程预约：${item.title}（示意）`);
+    });
+    row.append(thumb, body, btn);
+    list.appendChild(row);
+  });
+}
 
-  openModal("hot-service");
+function initSvcPages() {
+  const ht = document.getElementById("homecare-tabs");
+  if (ht && !ht.dataset.bound) {
+    ht.dataset.bound = "1";
+    ht.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-homecare-tab]");
+      if (!t) return;
+      ht.querySelectorAll(".svc-tab").forEach((x) => x.classList.remove("active"));
+      t.classList.add("active");
+      homecareActiveTab = t.dataset.homecareTab;
+      renderHomecareList();
+    });
+  }
+  const yt = document.getElementById("yoga-tabs");
+  if (yt && !yt.dataset.bound) {
+    yt.dataset.bound = "1";
+    yt.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-yoga-tab]");
+      if (!t) return;
+      yt.querySelectorAll(".svc-tab").forEach((x) => x.classList.remove("active"));
+      t.classList.add("active");
+      yogaActiveTab = t.dataset.yogaTab;
+      renderYogaList();
+    });
+  }
+}
+
+function renderHomecarePage() {
+  initSvcPages();
+  const ht = document.getElementById("homecare-tabs");
+  if (ht) {
+    ht.querySelectorAll(".svc-tab").forEach((x) => {
+      x.classList.toggle("active", x.dataset.homecareTab === homecareActiveTab);
+    });
+  }
+  renderHomecareList();
+}
+
+function renderYogaPage() {
+  initSvcPages();
+  const yt = document.getElementById("yoga-tabs");
+  if (yt) {
+    yt.querySelectorAll(".svc-tab").forEach((x) => {
+      x.classList.toggle("active", x.dataset.yogaTab === yogaActiveTab);
+    });
+  }
+  renderYogaList();
 }
 
 function bindDataMsgEvents(scope = document) {
@@ -832,6 +924,8 @@ function switchPage(pageName) {
   else if (pageName === "health-cycle") refreshHealthCyclePage();
   else if (pageName === "health-breathe") refreshHealthBreathePage();
   else if (pageName === "health-medicine") refreshHealthMedicinePage();
+  else if (pageName === "homecare") renderHomecarePage();
+  else if (pageName === "yoga") renderYogaPage();
 }
 
 let wardrobeCaptureStream = null;

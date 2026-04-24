@@ -1721,6 +1721,161 @@ body {
   color: #3d2a32;
 }
 
+/* --- 上门服务 / 瑜伽 列表页 --- */
+.page-svc.page {
+  background: #f2f1f4;
+}
+
+.svc-shell {
+  margin: 0 -14px;
+  padding: 6px 14px 88px;
+  min-height: calc(100vh - 120px);
+}
+
+.svc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.svc-back {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 12px;
+  background: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  color: #4a3542;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.svc-page-title {
+  flex: 1;
+  margin: 0;
+  font-size: 19px;
+  font-weight: 800;
+  color: #1f1f1f;
+  text-align: center;
+  padding-right: 40px;
+}
+
+.svc-tabs-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 8px -14px 14px;
+  padding: 0 14px;
+}
+
+.svc-tabs {
+  display: flex;
+  gap: 22px;
+  padding: 4px 0 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  width: max-content;
+  min-width: 100%;
+}
+
+.svc-tab {
+  position: relative;
+  border: none;
+  background: none;
+  padding: 8px 2px 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #8a8288;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.svc-tab.active {
+  color: #1f1f1f;
+}
+
+.svc-tab.active::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f7a0c4, #f07aad);
+}
+
+.svc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.svc-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.svc-card-img {
+  width: 76px;
+  height: 76px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #f5eef2;
+}
+
+.svc-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.svc-card-title {
+  display: block;
+  font-size: 16px;
+  font-weight: 800;
+  color: #1f1f1f;
+  margin-bottom: 4px;
+}
+
+.svc-card-meta {
+  margin: 0;
+  font-size: 12px;
+  color: #9a9098;
+  line-height: 1.4;
+}
+
+.svc-card-hint {
+  margin: 6px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #3d2a32;
+}
+
+.svc-card-btn {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #f7a0c4, #f07aad);
+  box-shadow: 0 4px 12px rgba(240, 122, 173, 0.35);
+}
+
+.svc-card-btn--muted {
+  background: #e8e6ea;
+  color: #6a5f6e;
+  box-shadow: none;
+}
+
 .section-title {
   display: flex;
   align-items: center;

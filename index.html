@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=35">
+  <link rel="stylesheet" href="./styles.css?v=36">
 </head>
 <body>
   <div class="app-shell">
@@ -329,6 +329,41 @@
         <h3 class="health-h3">全部药品</h3>
         <ul class="health-record-list" id="med-all-list"></ul>
       </article>
+    </section>
+
+    <section id="page-homecare" class="page page-svc">
+      <div class="svc-shell">
+        <header class="svc-header">
+          <button type="button" class="svc-back" data-page-jump="home" aria-label="返回首页">←</button>
+          <h1 class="svc-page-title">上门按摩/推拿服务</h1>
+        </header>
+        <div class="svc-tabs-scroll">
+          <div class="svc-tabs" id="homecare-tabs" role="tablist" aria-label="服务分类">
+            <button type="button" class="svc-tab active" data-homecare-tab="按摩">按摩</button>
+            <button type="button" class="svc-tab" data-homecare-tab="推拿">推拿</button>
+            <button type="button" class="svc-tab" data-homecare-tab="SPA">SPA</button>
+            <button type="button" class="svc-tab" data-homecare-tab="康复">康复</button>
+          </div>
+        </div>
+        <div class="svc-list" id="homecare-list"></div>
+      </div>
+    </section>
+
+    <section id="page-yoga" class="page page-svc">
+      <div class="svc-shell">
+        <header class="svc-header">
+          <button type="button" class="svc-back" data-page-jump="home" aria-label="返回首页">←</button>
+          <h1 class="svc-page-title">瑜伽课程</h1>
+        </header>
+        <div class="svc-tabs-scroll">
+          <div class="svc-tabs" id="yoga-tabs" role="tablist" aria-label="课程类型">
+            <button type="button" class="svc-tab active" data-yoga-tab="线上">线上</button>
+            <button type="button" class="svc-tab" data-yoga-tab="线下">线下</button>
+            <button type="button" class="svc-tab" data-yoga-tab="私教">私教</button>
+          </div>
+        </div>
+        <div class="svc-list" id="yoga-list"></div>
+      </div>
     </section>
 
     <section id="page-clinic" class="page">
@@ -719,18 +754,6 @@
     </div>
   </div>
 
-  <div class="modal" id="modal-hot-service" aria-hidden="true">
-    <div class="modal-content">
-      <h3 id="hot-service-title">热门服务</h3>
-      <div id="hot-service-content" class="list"></div>
-      <div class="actions">
-        <button class="btn" id="hot-service-main-action">立即进入</button>
-        <button class="btn" id="hot-service-sub-action">查看方案</button>
-        <button class="btn btn-close" data-close="hot-service">关闭</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal" id="modal-wardrobe-cat" aria-hidden="true">
     <div class="modal-content wardrobe-cat-modal">
       <h3>归入衣柜分类</h3>
@@ -794,7 +817,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=27"></script>
+  <script src="./app.js?v=29"></script>
   </div>
 </body>
 </html>
