@@ -238,9 +238,10 @@ function setupVoiceConversation() {
   recognition.continuous = false;
 
   let isPressing = false;
+  let isListening = false;
 
   const setVoiceBtn = (listening) => {
-    voiceBtnEl.textContent = listening ? "🎙️ 正在聆听..." : "🎤 按住说话";
+    voiceBtnEl.textContent = listening ? "🎙️ 正在聆听...（点我结束）" : "🎤 按住说话（或点按开始）";
     voiceBtnEl.classList.toggle("is-listening", listening);
   };
 
@@ -256,34 +257,66 @@ function setupVoiceConversation() {
     speakText(reply);
   };
 
-  recognition.onerror = () => {
-    showToast("语音识别失败，请重试。");
+  recognition.onerror = (event) => {
+    const err = event?.error || "unknown";
+    const errMap = {
+      "not-allowed": "麦克风被拒绝，请在浏览器地址栏开启麦克风权限。",
+      "service-not-allowed": "浏览器语音服务不可用，请切换 Chrome/Edge。",
+      "network": "语音识别网络异常，请检查网络后重试。",
+      "no-speech": "没有检测到语音，请靠近麦克风重试。",
+      "audio-capture": "未检测到麦克风设备，请检查系统输入设备。",
+      "aborted": "语音识别已中断，请重试。"
+    };
+    showToast(errMap[err] || `语音识别失败：${err}`);
     setVoiceBtn(false);
   };
 
   recognition.onend = () => {
     isPressing = false;
+    isListening = false;
     setVoiceBtn(false);
   };
 
   const startListening = () => {
-    if (isPressing) return;
+    if (isPressing || isListening) return;
     isPressing = true;
+    isListening = true;
     setVoiceBtn(true);
-    recognition.start();
+    try {
+      recognition.start();
+    } catch (error) {
+      isPressing = false;
+      isListening = false;
+      setVoiceBtn(false);
+      showToast(`无法开始语音识别：${error.message}`);
+    }
   };
 
   const stopListening = () => {
-    if (!isPressing) return;
-    recognition.stop();
+    if (!isPressing && !isListening) return;
+    isPressing = false;
+    try {
+      recognition.stop();
+    } catch {
+      isListening = false;
+      setVoiceBtn(false);
+    }
   };
 
-  voiceBtnEl.addEventListener("mousedown", startListening);
-  voiceBtnEl.addEventListener("touchstart", startListening, { passive: true });
-  voiceBtnEl.addEventListener("mouseup", stopListening);
-  voiceBtnEl.addEventListener("mouseleave", stopListening);
-  voiceBtnEl.addEventListener("touchend", stopListening);
-  voiceBtnEl.addEventListener("touchcancel", stopListening);
+  // Press-to-talk (preferred)
+  voiceBtnEl.addEventListener("pointerdown", startListening);
+  voiceBtnEl.addEventListener("pointerup", stopListening);
+  voiceBtnEl.addEventListener("pointerleave", stopListening);
+  voiceBtnEl.addEventListener("pointercancel", stopListening);
+
+  // Click toggle fallback for browsers where hold events are unstable.
+  voiceBtnEl.addEventListener("click", () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  });
 }
 
 function setupAIConfig() {
