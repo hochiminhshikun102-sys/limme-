@@ -237,15 +237,16 @@ function setupVoiceConversation() {
   recognition.maxAlternatives = 1;
   recognition.continuous = false;
 
-  let isPressing = false;
   let isListening = false;
+  let hasResultInSession = false;
 
   const setVoiceBtn = (listening) => {
-    voiceBtnEl.textContent = listening ? "🎙️ 正在聆听...（点我结束）" : "🎤 按住说话（或点按开始）";
+    voiceBtnEl.textContent = listening ? "🎙️ 正在聆听...（点我结束）" : "🎤 点按开始说话";
     voiceBtnEl.classList.toggle("is-listening", listening);
   };
 
   recognition.onresult = async (event) => {
+    hasResultInSession = true;
     const text = event.results?.[0]?.[0]?.transcript?.trim();
     if (!text) {
       showToast("没有识别到有效语音，请再试一次。");
@@ -271,21 +272,26 @@ function setupVoiceConversation() {
     setVoiceBtn(false);
   };
 
+  recognition.onstart = () => {
+    hasResultInSession = false;
+    isListening = true;
+    setVoiceBtn(true);
+    showToast("已开始聆听，请说话。");
+  };
+
   recognition.onend = () => {
-    isPressing = false;
+    if (isListening && !hasResultInSession) {
+      showToast("未识别到语音内容，请在安静环境下重试。");
+    }
     isListening = false;
     setVoiceBtn(false);
   };
 
   const startListening = () => {
-    if (isPressing || isListening) return;
-    isPressing = true;
-    isListening = true;
-    setVoiceBtn(true);
+    if (isListening) return;
     try {
       recognition.start();
     } catch (error) {
-      isPressing = false;
       isListening = false;
       setVoiceBtn(false);
       showToast(`无法开始语音识别：${error.message}`);
@@ -293,8 +299,7 @@ function setupVoiceConversation() {
   };
 
   const stopListening = () => {
-    if (!isPressing && !isListening) return;
-    isPressing = false;
+    if (!isListening) return;
     try {
       recognition.stop();
     } catch {
@@ -303,13 +308,7 @@ function setupVoiceConversation() {
     }
   };
 
-  // Press-to-talk (preferred)
-  voiceBtnEl.addEventListener("pointerdown", startListening);
-  voiceBtnEl.addEventListener("pointerup", stopListening);
-  voiceBtnEl.addEventListener("pointerleave", stopListening);
-  voiceBtnEl.addEventListener("pointercancel", stopListening);
-
-  // Click toggle fallback for browsers where hold events are unstable.
+  // Single interaction mode: click to start, click again to stop.
   voiceBtnEl.addEventListener("click", () => {
     if (isListening) {
       stopListening();
