@@ -795,6 +795,9 @@ function switchPage(pageName) {
     preloadBoyfriendAvatars();
     renderBoyfriendPersonaCards();
   }
+  if (pageName !== "boyfriend") {
+    closeBfVideoCall();
+  }
 }
 
 let wardrobeCaptureStream = null;
@@ -2020,6 +2023,25 @@ const bfInputEl = document.getElementById("bf-input");
 const bfSendEl = document.getElementById("bf-send");
 const bfSpeakLastEl = document.getElementById("bf-speak-last");
 const bfSuggestLineEl = document.getElementById("bf-suggest-line");
+const bfVideoOverlayEl = document.getElementById("bf-video-overlay");
+const bfVideoToggleEl = document.getElementById("bf-video-toggle");
+const bfVideoBackTextEl = document.getElementById("bf-video-back-text");
+const bfVideoPeerNameEl = document.getElementById("bf-video-peer-name");
+const bfVideoSubEl = document.getElementById("bf-video-sub");
+const bfVideoRemoteAvatarEl = document.getElementById("bf-video-remote-avatar");
+const bfVideoLocalEl = document.getElementById("bf-video-local");
+const bfVideoMuteEl = document.getElementById("bf-video-mute");
+const bfVideoSpeakerEl = document.getElementById("bf-video-speaker");
+const bfVideoPttEl = document.getElementById("bf-video-ptt");
+const bfVideoFlipEl = document.getElementById("bf-video-flip");
+const bfVideoHangupEl = document.getElementById("bf-video-hangup");
+
+let bfVideoStream = null;
+let bfVideoSpeakerOn = true;
+let bfVideoFacingUser = true;
+let bfVideoRecognition = null;
+let bfVideoPttHeld = false;
+let bfVideoPttCaptureId = null;
 
 if (bfRoomAvatarImgEl) {
   bfRoomAvatarImgEl.src = bfAvatarUrl("bf-v2-lu-yu.png");
@@ -2077,6 +2099,127 @@ async function getBoyfriendReply(userText) {
   }
 }
 
+function bfVideoCallOpen() {
+  return bfVideoOverlayEl && !bfVideoOverlayEl.classList.contains("is-hidden");
+}
+
+function stopBfCamera() {
+  if (bfVideoStream) {
+    bfVideoStream.getTracks().forEach((t) => t.stop());
+    bfVideoStream = null;
+  }
+  if (bfVideoLocalEl) bfVideoLocalEl.srcObject = null;
+}
+
+function closeBfVideoCall(options = {}) {
+  stopBfCamera();
+  window.speechSynthesis?.cancel();
+  if (bfVideoOverlayEl) {
+    bfVideoOverlayEl.classList.add("is-hidden");
+    bfVideoOverlayEl.setAttribute("aria-hidden", "true");
+  }
+  if (options.toast) showToast(options.toast);
+}
+
+function syncBfVideoRemoteAvatarFromRoom() {
+  if (!bfVideoRemoteAvatarEl || !bfRoomAvatarImgEl) return;
+  const src = bfRoomAvatarImgEl.currentSrc || bfRoomAvatarImgEl.src;
+  if (src) bfVideoRemoteAvatarEl.src = src;
+  const persona = bfPersonasById.get(bfActiveId);
+  bfVideoRemoteAvatarEl.alt = persona ? `${persona.name} · 数字人` : "数字人";
+}
+
+async function startBfCamera() {
+  if (!bfVideoLocalEl || !navigator.mediaDevices?.getUserMedia) {
+    showToast("当前环境不支持摄像头预览。");
+    return false;
+  }
+  stopBfCamera();
+  try {
+    bfVideoStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: bfVideoFacingUser ? "user" : "environment" },
+      audio: true
+    });
+    bfVideoLocalEl.srcObject = bfVideoStream;
+    await bfVideoLocalEl.play().catch(() => {});
+    return true;
+  } catch (err) {
+    showToast(`无法开启摄像头：${err?.name || err?.message || "权限被拒绝"}`);
+    return false;
+  }
+}
+
+async function flipBfCamera() {
+  bfVideoFacingUser = !bfVideoFacingUser;
+  if (bfVideoCallOpen()) await startBfCamera();
+}
+
+async function openBfVideoCall() {
+  if (!bfActiveId) {
+    showToast("请先选择聊天对象。");
+    return;
+  }
+  if (!bfVideoOverlayEl) return;
+  if (bfVideoPeerNameEl && bfRoomNameEl) bfVideoPeerNameEl.textContent = bfRoomNameEl.textContent || "对方";
+  if (bfVideoSubEl) bfVideoSubEl.textContent = "视频通话 · 数字人";
+  syncBfVideoRemoteAvatarFromRoom();
+  bfVideoOverlayEl.classList.remove("is-hidden");
+  bfVideoOverlayEl.setAttribute("aria-hidden", "false");
+  await startBfCamera();
+}
+
+function ensureBfVideoRecognition() {
+  const Ctor = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!Ctor) return null;
+  if (!bfVideoRecognition) {
+    const r = new Ctor();
+    r.lang = "zh-CN";
+    r.interimResults = false;
+    r.continuous = false;
+    r.maxAlternatives = 1;
+    r.onresult = (event) => {
+      const text = event.results?.[0]?.[0]?.transcript?.trim();
+      if (text) void deliverBoyfriendUtterance(text, { silentEmpty: true });
+      else showToast("没听清，松开后再试一次。");
+    };
+    r.onerror = (event) => {
+      const err = event.error;
+      if (err === "aborted" || err === "no-speech") return;
+      showToast(`语音识别：${err}`);
+    };
+    bfVideoRecognition = r;
+  }
+  return bfVideoRecognition;
+}
+
+async function deliverBoyfriendUtterance(text, options = {}) {
+  const { silentEmpty = false } = options;
+  const t = (text || "").trim();
+  if (!t) {
+    if (!silentEmpty) showToast("先写点什么再发送～");
+    return false;
+  }
+  if (!bfActiveId) {
+    showToast("请先选一位对象。");
+    return false;
+  }
+  appendBfBubble(t, "user");
+  trimBfThread();
+  if (bfSendEl) bfSendEl.disabled = true;
+  try {
+    const reply = await getBoyfriendReply(t);
+    bfThread.push({ role: "user", content: t });
+    bfThread.push({ role: "assistant", content: reply });
+    trimBfThread();
+    appendBfBubble(reply, "ai");
+    bfLastAiText = reply;
+    if (bfVideoCallOpen() && bfVideoSpeakerOn) speakText(reply);
+    return true;
+  } finally {
+    if (bfSendEl) bfSendEl.disabled = false;
+  }
+}
+
 function clearBfRoomTheme() {
   bfPanelRoomEl?.removeAttribute("data-bf-theme");
   if (bfRoomHeadEl) bfRoomHeadEl.className = "bf-room-head";
@@ -2088,6 +2231,7 @@ function applyBfRoomTheme(personaId) {
 }
 
 function showBfPickPanel() {
+  closeBfVideoCall();
   clearBfRoomTheme();
   bfPanelPickEl?.classList.remove("is-hidden");
   bfPanelRoomEl?.classList.add("is-hidden");
@@ -2109,6 +2253,7 @@ function resetBoyfriendOpening() {
 }
 
 function openBoyfriendRoom(persona) {
+  closeBfVideoCall();
   bfActiveId = persona.id;
   bfThread.length = 0;
   bfLastAiText = "";
@@ -2119,6 +2264,7 @@ function openBoyfriendRoom(persona) {
     bfRoomAvatarImgEl.decoding = "async";
     requestAnimationFrame(() => {
       bfRoomAvatarImgEl.src = src;
+      syncBfVideoRemoteAvatarFromRoom();
     });
     bfRoomAvatarImgEl.alt = `${persona.name} · limme柠美 数字人`;
   }
@@ -2164,19 +2310,7 @@ async function sendBoyfriendMessage() {
     return;
   }
   if (bfInputEl) bfInputEl.value = "";
-  appendBfBubble(text, "user");
-  trimBfThread();
-  if (bfSendEl) bfSendEl.disabled = true;
-  try {
-    const reply = await getBoyfriendReply(text);
-    bfThread.push({ role: "user", content: text });
-    bfThread.push({ role: "assistant", content: reply });
-    trimBfThread();
-    appendBfBubble(reply, "ai");
-    bfLastAiText = reply;
-  } finally {
-    if (bfSendEl) bfSendEl.disabled = false;
-  }
+  await deliverBoyfriendUtterance(text, { silentEmpty: true });
 }
 
 function initBoyfriendPage() {
@@ -2217,6 +2351,84 @@ function initBoyfriendPage() {
     bfInputEl?.focus();
     showToast("已填入一句，可改改再发。");
   });
+
+  bfVideoToggleEl?.addEventListener("click", () => void openBfVideoCall());
+  bfVideoBackTextEl?.addEventListener("click", () => closeBfVideoCall({ toast: "已切回文字聊天" }));
+  bfVideoHangupEl?.addEventListener("click", () => closeBfVideoCall({ toast: "视频通话已结束" }));
+  bfVideoMuteEl?.addEventListener("click", () => {
+    const tracks = bfVideoStream?.getAudioTracks?.() || [];
+    if (!tracks.length) {
+      showToast("麦克风未就绪。");
+      return;
+    }
+    tracks.forEach((tr) => {
+      tr.enabled = !tr.enabled;
+    });
+    const muted = !tracks[0].enabled;
+    bfVideoMuteEl?.classList.toggle("is-muted", muted);
+    bfVideoMuteEl?.setAttribute("aria-pressed", muted ? "true" : "false");
+  });
+  bfVideoSpeakerEl?.addEventListener("click", () => {
+    bfVideoSpeakerOn = !bfVideoSpeakerOn;
+    bfVideoSpeakerEl?.setAttribute("aria-pressed", bfVideoSpeakerOn ? "true" : "false");
+    bfVideoSpeakerEl?.classList.toggle("is-muted", !bfVideoSpeakerOn);
+    if (!bfVideoSpeakerOn) window.speechSynthesis?.cancel();
+    showToast(bfVideoSpeakerOn ? "扬声器：开（会朗读数字人回复）" : "扬声器：关（仅文字）");
+  });
+  bfVideoFlipEl?.addEventListener("click", () => void flipBfCamera());
+
+  const ptt = bfVideoPttEl;
+  if (ptt) {
+    const endPtt = () => {
+      if (!bfVideoPttHeld) return;
+      bfVideoPttHeld = false;
+      ptt.classList.remove("is-active");
+      ptt.textContent = "按住 说话";
+      try {
+        bfVideoRecognition?.stop();
+      } catch (_) {
+        /* ignore */
+      }
+      if (bfVideoPttCaptureId != null) {
+        try {
+          ptt.releasePointerCapture(bfVideoPttCaptureId);
+        } catch (_) {
+          /* ignore */
+        }
+        bfVideoPttCaptureId = null;
+      }
+    };
+    ptt.addEventListener("pointerdown", (e) => {
+      if (!bfVideoCallOpen()) return;
+      if (bfSendEl?.disabled) {
+        showToast("等上一条说完再说话～");
+        return;
+      }
+      const rec = ensureBfVideoRecognition();
+      if (!rec) {
+        showToast("当前环境不支持语音识别，请用 Chrome / Edge，或先用文字。");
+        return;
+      }
+      e.preventDefault();
+      try {
+        ptt.setPointerCapture(e.pointerId);
+        bfVideoPttCaptureId = e.pointerId;
+      } catch (_) {
+        /* ignore */
+      }
+      try {
+        rec.start();
+        bfVideoPttHeld = true;
+        ptt.classList.add("is-active");
+        ptt.textContent = "松开 发送";
+      } catch (_) {
+        showToast("请松手后再重新按住说话。");
+      }
+    });
+    ptt.addEventListener("pointerup", endPtt);
+    ptt.addEventListener("pointercancel", endPtt);
+    ptt.addEventListener("lostpointercapture", endPtt);
+  }
 }
 
 initBoyfriendPage();

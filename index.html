@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=32">
+  <link rel="stylesheet" href="./styles.css?v=33">
 </head>
 <body>
   <div class="app-shell">
@@ -342,27 +342,59 @@
         </div>
 
         <div id="bf-panel-room" class="bf-panel is-hidden" aria-live="polite">
-          <div class="bf-room-head" id="bf-room-head">
-            <div class="bf-room-avatar" aria-hidden="true">
-              <img id="bf-room-avatar-img" class="bf-room-avatar-img" src="" width="48" height="48" alt="" loading="eager" decoding="async">
+          <div id="bf-text-layout" class="bf-text-layout">
+            <div class="bf-room-head" id="bf-room-head">
+              <div class="bf-room-avatar" aria-hidden="true">
+                <img id="bf-room-avatar-img" class="bf-room-avatar-img" src="" width="48" height="48" alt="" loading="eager" decoding="async">
+              </div>
+              <div class="bf-room-meta">
+                <div class="bf-room-name" id="bf-room-name">—</div>
+                <div class="bf-room-tag" id="bf-room-tag">—</div>
+              </div>
+              <div class="bf-room-actions">
+                <button type="button" class="bf-mini-btn" id="bf-change-partner">换人</button>
+                <button type="button" class="bf-mini-btn" id="bf-clear-thread">清空</button>
+              </div>
             </div>
-            <div class="bf-room-meta">
-              <div class="bf-room-name" id="bf-room-name">—</div>
-              <div class="bf-room-tag" id="bf-room-tag">—</div>
+            <div class="bf-chat-scroll" id="bf-chat-scroll"></div>
+            <div class="bf-composer">
+              <input type="text" id="bf-input" class="bf-input" maxlength="2000" placeholder="想说什么…" autocomplete="off">
+              <button type="button" class="bf-send" id="bf-send">发送</button>
             </div>
-            <div class="bf-room-actions">
-              <button type="button" class="bf-mini-btn" id="bf-change-partner">换人</button>
-              <button type="button" class="bf-mini-btn" id="bf-clear-thread">清空</button>
+            <div class="bf-toolbar">
+              <button type="button" class="bf-tool-btn" id="bf-speak-last">朗读上一条</button>
+              <button type="button" class="bf-tool-btn" id="bf-suggest-line">帮我想一句</button>
+              <button type="button" class="bf-tool-btn bf-tool-btn--accent" id="bf-video-toggle">视频通话</button>
             </div>
           </div>
-          <div class="bf-chat-scroll" id="bf-chat-scroll"></div>
-          <div class="bf-composer">
-            <input type="text" id="bf-input" class="bf-input" maxlength="2000" placeholder="想说什么…" autocomplete="off">
-            <button type="button" class="bf-send" id="bf-send">发送</button>
-          </div>
-          <div class="bf-toolbar">
-            <button type="button" class="bf-tool-btn" id="bf-speak-last">朗读上一条</button>
-            <button type="button" class="bf-tool-btn" id="bf-suggest-line">帮我想一句</button>
+
+          <div id="bf-video-overlay" class="bf-video-overlay is-hidden" aria-hidden="true">
+            <div class="bf-video-topbar">
+              <button type="button" class="bf-video-icon-btn" id="bf-video-back-text" aria-label="切回文字聊天">文字</button>
+              <div class="bf-video-top-center">
+                <div class="bf-video-peer-name" id="bf-video-peer-name">—</div>
+                <div class="bf-video-sub" id="bf-video-sub">视频通话中</div>
+              </div>
+              <span class="bf-video-top-spacer" aria-hidden="true"></span>
+            </div>
+            <div class="bf-video-stage">
+              <div class="bf-video-remote">
+                <img id="bf-video-remote-avatar" class="bf-video-remote-avatar" src="" alt="" />
+                <div class="bf-video-remote-caption">数字人形象（示意）</div>
+              </div>
+              <div class="bf-video-local-pip">
+                <video id="bf-video-local" class="bf-video-local" playsinline muted autoplay></video>
+                <span class="bf-video-pip-label">我</span>
+              </div>
+            </div>
+            <p class="bf-video-disclaimer">当前为网页端体验：对方画面使用静态头像示意。若需真人流式数字人，需对接云厂商数字人 / WebRTC 服务。</p>
+            <div class="bf-video-dock">
+              <button type="button" class="bf-video-dock-btn" id="bf-video-mute" aria-pressed="false" title="麦克风">🎤</button>
+              <button type="button" class="bf-video-dock-btn" id="bf-video-speaker" aria-pressed="true" title="扬声器">🔊</button>
+              <button type="button" class="bf-video-ptt" id="bf-video-ptt">按住 说话</button>
+              <button type="button" class="bf-video-dock-btn" id="bf-video-flip" title="翻转摄像头">⟲</button>
+              <button type="button" class="bf-video-hangup" id="bf-video-hangup">结束</button>
+            </div>
           </div>
         </div>
       </div>
@@ -555,7 +587,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=25"></script>
+  <script src="./app.js?v=26"></script>
   </div>
 </body>
 </html>
