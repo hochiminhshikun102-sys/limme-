@@ -179,7 +179,7 @@ body {
   stroke-linecap: round;
   stroke-dasharray: 48 620;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95));
-  animation: voicePulseOrbit 6.3s linear infinite, voicePulseBreath 8.7s ease-in-out infinite;
+  animation: voicePulseOrbit 21s linear infinite, voicePulseBreath 29s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
@@ -198,7 +198,7 @@ body {
 
 .voice-btn.is-listening .voice-pulse {
   stroke: rgba(255, 169, 214, 1);
-  animation-duration: 3.45s, 4.05s;
+  animation-duration: 11.5s, 13.5s;
   filter: drop-shadow(0 0 7px rgba(255, 102, 177, 0.95));
 }
 
