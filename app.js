@@ -167,8 +167,8 @@ function setupChatAutoLoop() {
 
   let timer = null;
   let pausedUntil = 0;
-  const step = 52;
-  const intervalMs = 2200;
+  const step = 34;
+  const intervalMs = 2600;
 
   const tick = () => {
     const now = Date.now();
@@ -179,6 +179,7 @@ function setupChatAutoLoop() {
 
     if (chatListEl.scrollTop >= maxScroll - 6) {
       chatListEl.scrollTop = 0;
+      pausedUntil = Date.now() + 1800;
     } else {
       chatListEl.scrollBy({ top: step, behavior: "smooth" });
     }
@@ -187,7 +188,7 @@ function setupChatAutoLoop() {
   timer = window.setInterval(tick, intervalMs);
 
   const pauseLoop = () => {
-    pausedUntil = Date.now() + 5000;
+    pausedUntil = Date.now() + 6500;
   };
 
   chatListEl.addEventListener("mouseenter", pauseLoop);
