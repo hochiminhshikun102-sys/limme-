@@ -453,6 +453,31 @@ body {
   filter: brightness(0.96);
 }
 
+.flow-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.flow-action-btn {
+  border: 1.5px solid #f6c7dd;
+  border-radius: 999px;
+  background: #fff;
+  color: #5f4754;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.2;
+  cursor: pointer;
+  min-height: 38px;
+}
+
+.flow-action-btn.is-active {
+  background: linear-gradient(135deg, #f69bc0, #ea7bad);
+  border-color: #ea7bad;
+  color: #fff;
+  box-shadow: 0 6px 12px rgba(232, 122, 171, 0.28);
+}
+
 .flow-timeline-card {
   padding: 10px;
 }
@@ -519,6 +544,12 @@ body {
 
 .flow-dot.is-current::before {
   background: #fff;
+}
+
+@media (max-width: 420px) {
+  .flow-actions-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .submenu-list {

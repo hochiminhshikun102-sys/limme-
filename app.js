@@ -186,63 +186,72 @@ const faceFlowSteps = [
     screen: "对应原型：4.png",
     image: "./assets/flow/4.png",
     rows: ["医生主页与预约咨询入口", "用户点击“预约咨询”进入检测链路"],
-    cta: "进入检测报告"
+    cta: "进入检测报告",
+    actions: ["预约咨询", "查看医生主页", "检测说明"]
   },
   {
     title: "步骤2：检测报告",
     screen: "对应原型：5.png",
     image: "./assets/flow/5.png",
     rows: ["展示水润度/毛孔/弹性指标", "系统输出检测结论与改善建议"],
-    cta: "生成个性方案"
+    cta: "生成个性方案",
+    actions: ["查看完整报告", "下载报告", "继续问诊"]
   },
   {
     title: "步骤3：医生问答",
     screen: "对应原型：6.png",
     image: "./assets/flow/6.png",
     rows: ["数字人医生根据报告给出建议", "用户补充问题后发送问诊"],
-    cta: "进入定制方案"
+    cta: "进入定制方案",
+    actions: ["发送问题", "语音补充", "查看问答记录"]
   },
   {
     title: "步骤4：定制方案",
     screen: "对应原型：7.png",
     image: "./assets/flow/7.png",
     rows: ["按 Step1~Step3 展示护肤流程", "给出预期效果与疗程节奏"],
-    cta: "选择套餐"
+    cta: "选择套餐",
+    actions: ["Step1 清洁修护", "Step2 轻医美治疗", "Step3 居家维护"]
   },
   {
     title: "步骤5：套餐选择",
     screen: "对应原型：8.png",
     image: "./assets/flow/8.png",
     rows: ["基础版/进阶版/尊享版对比", "支持一键预约高阶套餐"],
-    cta: "选择预约时间"
+    cta: "选择预约时间",
+    actions: ["基础版", "进阶版", "尊享版"]
   },
   {
     title: "步骤6：预约时间",
     screen: "对应原型：9.png",
     image: "./assets/flow/9.png",
     rows: ["按日期与时段选可预约窗口", "确认到店时间并锁定资源"],
-    cta: "确认订单"
+    cta: "确认订单",
+    actions: ["2024.11.15", "10:00-11:00", "14:00-15:00", "16:00-17:00", "确认时间"]
   },
   {
     title: "步骤7：确认订单",
     screen: "对应原型：10.png",
     image: "./assets/flow/10.png",
     rows: ["展示机构、项目、时间和金额", "核对信息后提交订单"],
-    cta: "去支付"
+    cta: "去支付",
+    actions: ["核对机构", "核对项目", "提交订单"]
   },
   {
     title: "步骤8：支付",
     screen: "对应原型：11.png / 11.jpg",
     image: "./assets/flow/11.png",
     rows: ["选择支付方式（微信/支付宝/银行卡）", "完成支付进入预约成功页"],
-    cta: "查看预约结果"
+    cta: "查看预约结果",
+    actions: ["微信支付", "支付宝", "银行卡"]
   },
   {
     title: "步骤9：预约成功",
     screen: "对应原型：12.png",
     image: "./assets/flow/12.png",
     rows: ["生成核销码（到店核销）", "支持分享与到店前提醒"],
-    cta: "完成链路"
+    cta: "完成链路",
+    actions: ["查看核销码", "添加日历提醒", "分享给闺蜜"]
   }
 ];
 
@@ -252,56 +261,64 @@ const tcmFlowSteps = [
     screen: "对应原型：27.png",
     image: "./assets/flow/27.png",
     rows: ["按评分/距离筛选中医心理机构", "点击机构进入医师详情"],
-    cta: "查看医师详情"
+    cta: "查看医师详情",
+    actions: ["按评分排序", "按距离排序", "进入机构"]
   },
   {
     title: "步骤2：医师详情",
     screen: "对应原型：28.png",
     image: "./assets/flow/28.png",
     rows: ["查看医师资质与擅长（失眠/压力）", "点击“立即预约”进入问诊"],
-    cta: "开始问诊"
+    cta: "开始问诊",
+    actions: ["查看资质", "擅长方向", "立即预约"]
   },
   {
     title: "步骤3：开始问诊",
     screen: "对应原型：29.png",
     image: "./assets/flow/29.png",
     rows: ["选择情志/睡眠/压力问题标签", "输入当前状态并提交问诊"],
-    cta: "查看体质报告"
+    cta: "查看体质报告",
+    actions: ["睡眠问题", "压力情绪", "提交问诊"]
   },
   {
     title: "步骤4：体质分析报告",
     screen: "对应原型：30.png",
     image: "./assets/flow/30.png",
     rows: ["输出体质结论（如气郁质）", "展示关键症状条目"],
-    cta: "查看调理方案"
+    cta: "查看调理方案",
+    actions: ["体质结论", "风险提示", "生成方案"]
   },
   {
     title: "步骤5：专属调理方案",
     screen: "对应原型：31.png",
     image: "./assets/flow/31.png",
     rows: ["作息与饮食建议清单", "展示方案执行进度"],
-    cta: "到店预约"
+    cta: "到店预约",
+    actions: ["作息计划", "饮食建议", "执行打卡"]
   },
   {
     title: "步骤6：到店预约",
     screen: "对应原型：32.png",
     image: "./assets/flow/32.png",
     rows: ["选择机构与日期时段", "提交预约进入后续追踪"],
-    cta: "设置复诊提醒"
+    cta: "设置复诊提醒",
+    actions: ["选择机构", "选择时段", "提交预约"]
   },
   {
     title: "步骤7：复诊提醒",
     screen: "对应原型：35.png",
     image: "./assets/flow/35.png",
     rows: ["查看复诊时间/医师信息", "设置提醒避免漏诊"],
-    cta: "去服务评价"
+    cta: "去服务评价",
+    actions: ["7天前提醒", "1天前提醒", "当天提醒"]
   },
   {
     title: "步骤8：服务评价",
     screen: "对应原型：36.png",
     image: "./assets/flow/36.png",
     rows: ["星级评分 + 文本评价", "形成服务闭环与口碑沉淀"],
-    cta: "完成链路"
+    cta: "完成链路",
+    actions: ["五星评分", "文字评价", "提交评价"]
   }
 ];
 
@@ -329,6 +346,7 @@ function setAIConfig(cfg) {
 function createFlowRenderer(steps, titleEl, contentEl, timelineEl) {
   let current = 0;
   const dotEls = [];
+  const selectedActionMap = new Map();
 
   const renderTimeline = () => {
     if (!timelineEl) return;
@@ -405,6 +423,32 @@ function createFlowRenderer(steps, titleEl, contentEl, timelineEl) {
       ctaRow.textContent = `当前步操作：${step.cta}`;
       ctaRow.addEventListener("click", () => showToast(`${step.cta}（原型演示）`));
       bodyEl.appendChild(ctaRow);
+    }
+
+    if (Array.isArray(step.actions) && step.actions.length) {
+      const actionGridEl = document.createElement("div");
+      actionGridEl.className = "flow-actions-grid";
+      const selectedSet = selectedActionMap.get(current) || new Set();
+      step.actions.forEach((label) => {
+        const actionBtn = document.createElement("button");
+        actionBtn.type = "button";
+        actionBtn.className = "flow-action-btn";
+        actionBtn.textContent = label;
+        if (selectedSet.has(label)) actionBtn.classList.add("is-active");
+        actionBtn.addEventListener("click", () => {
+          const stepSet = selectedActionMap.get(current) || new Set();
+          if (stepSet.has(label)) {
+            stepSet.delete(label);
+          } else {
+            stepSet.add(label);
+          }
+          selectedActionMap.set(current, stepSet);
+          render();
+          showToast(`已选择：${label}`);
+        });
+        actionGridEl.appendChild(actionBtn);
+      });
+      bodyEl.appendChild(actionGridEl);
     }
 
     cardEl.appendChild(bodyEl);
