@@ -225,7 +225,9 @@ function setupVoiceConversation() {
   if (!voiceBtnEl) return;
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SpeechRecognition) {
-    voiceBtnEl.addEventListener("click", () => showToast("当前浏览器不支持语音识别，请使用 Chrome/Edge。"));
+    voiceBtnEl.addEventListener("click", () => {
+      showToast("当前环境不支持网页语音识别（微信内常见）。可用小程序原生语音或在Chrome/Edge打开。");
+    });
     return;
   }
 
@@ -239,6 +241,7 @@ function setupVoiceConversation() {
 
   const setVoiceBtn = (listening) => {
     voiceBtnEl.textContent = listening ? "🎙️ 正在聆听..." : "🎤 按住说话";
+    voiceBtnEl.classList.toggle("is-listening", listening);
   };
 
   recognition.onresult = async (event) => {
@@ -280,6 +283,7 @@ function setupVoiceConversation() {
   voiceBtnEl.addEventListener("mouseup", stopListening);
   voiceBtnEl.addEventListener("mouseleave", stopListening);
   voiceBtnEl.addEventListener("touchend", stopListening);
+  voiceBtnEl.addEventListener("touchcancel", stopListening);
 }
 
 function setupAIConfig() {

@@ -127,6 +127,11 @@ body {
 }
 
 .voice-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 12px;
   border: none;
   border-radius: 999px;
@@ -139,6 +144,72 @@ body {
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 8px 14px rgba(244, 127, 168, 0.32);
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  caret-color: transparent;
+  outline: none;
+}
+
+.voice-btn::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: 999px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 255, 255, 0) 0deg,
+    rgba(255, 255, 255, 0.9) 55deg,
+    rgba(255, 255, 255, 0) 110deg,
+    rgba(255, 255, 255, 0) 360deg
+  );
+  z-index: -1;
+  animation: voiceRingSpin 3.8s linear infinite;
+  opacity: 0.8;
+}
+
+.voice-btn::after {
+  content: "";
+  position: absolute;
+  inset: -7px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(245, 139, 178, 0.45) 0%, rgba(245, 139, 178, 0) 68%);
+  z-index: -2;
+  opacity: 0.35;
+  animation: voiceHaloPulse 2.8s ease-in-out infinite;
+}
+
+.voice-btn.is-listening {
+  background: #ff5ea0;
+  box-shadow: 0 0 0 2px rgba(255, 173, 209, 0.75), 0 0 18px rgba(255, 92, 161, 0.85);
+}
+
+.voice-btn.is-listening::before {
+  opacity: 1;
+  animation-duration: 1.2s;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 184, 221, 0) 0deg,
+    rgba(255, 196, 228, 1) 70deg,
+    rgba(255, 126, 186, 0.95) 130deg,
+    rgba(255, 184, 221, 0) 200deg,
+    rgba(255, 184, 221, 0) 360deg
+  );
+}
+
+.voice-btn.is-listening::after {
+  opacity: 0.8;
+  animation-duration: 1s;
+}
+
+@keyframes voiceRingSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes voiceHaloPulse {
+  0%, 100% { transform: scale(0.98); opacity: 0.28; }
+  50% { transform: scale(1.05); opacity: 0.55; }
 }
 
 .chat-card {
