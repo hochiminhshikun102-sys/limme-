@@ -14,6 +14,10 @@ const aiEndpointEl = document.getElementById("ai-endpoint");
 const aiModelEl = document.getElementById("ai-model");
 const aiKeyEl = document.getElementById("ai-key");
 const aiSaveBtnEl = document.getElementById("ai-save-btn");
+const hotServiceTitleEl = document.getElementById("hot-service-title");
+const hotServiceContentEl = document.getElementById("hot-service-content");
+const hotServiceMainActionEl = document.getElementById("hot-service-main-action");
+const hotServiceSubActionEl = document.getElementById("hot-service-sub-action");
 const clinicTitleEl = document.getElementById("clinic-title");
 const clinicListEl = document.getElementById("clinic-list");
 const flowTitleEl = document.getElementById("flow-title");
@@ -27,6 +31,33 @@ const scriptedChat = [
   { role: "ai", text: "好的，我可以帮你安排AI皮肤检测。你是想立即开始，还是先看报告示例？" },
   { role: "user", text: "立即开始" }
 ];
+
+const hotServiceMap = {
+  medical: {
+    title: "轻医美项目",
+    rows: ["肤质分析与项目匹配", "数字人医生初筛面诊", "治疗周期与报价透明展示"],
+    mainAction: "预约医美面诊",
+    subAction: "查看项目清单"
+  },
+  tcm: {
+    title: "中医调理",
+    rows: ["体质问询与睡眠评估", "食疗/理疗方案组合推荐", "支持到院与滋补品联动下单"],
+    mainAction: "进入中医问诊",
+    subAction: "查看调理方案"
+  },
+  homecare: {
+    title: "上门服务",
+    rows: ["上门推拿、按摩、康养", "按区域与时段智能排班", "服务前后提醒与评价闭环"],
+    mainAction: "立即预约上门",
+    subAction: "查看服务套餐"
+  },
+  yoga: {
+    title: "瑜伽课程",
+    rows: ["线上课程随时练", "线下场馆一键预约", "按体态目标生成课程计划"],
+    mainAction: "进入课程中心",
+    subAction: "查看课表"
+  }
+};
 
 const clinicData = {
   beauty: {
@@ -381,6 +412,31 @@ function setupAIConfig() {
   });
 }
 
+function openHotServicePanel(key) {
+  const cfg = hotServiceMap[key];
+  if (!cfg || !hotServiceTitleEl || !hotServiceContentEl) return;
+
+  hotServiceTitleEl.textContent = cfg.title;
+  hotServiceContentEl.innerHTML = "";
+  cfg.rows.forEach((row) => {
+    const item = document.createElement("div");
+    item.className = "list-row";
+    item.textContent = row;
+    hotServiceContentEl.appendChild(item);
+  });
+
+  if (hotServiceMainActionEl) {
+    hotServiceMainActionEl.textContent = cfg.mainAction;
+    hotServiceMainActionEl.onclick = () => showToast(`${cfg.mainAction} 已打开`);
+  }
+  if (hotServiceSubActionEl) {
+    hotServiceSubActionEl.textContent = cfg.subAction;
+    hotServiceSubActionEl.onclick = () => showToast(`${cfg.subAction} 已打开`);
+  }
+
+  openModal("hot-service");
+}
+
 function bindDataMsgEvents(scope = document) {
   scope.querySelectorAll("[data-msg]").forEach((item) => {
     if (item.dataset.bound === "1") return;
@@ -560,6 +616,10 @@ document.querySelectorAll(".mini-tab").forEach((tab) => {
 
 document.querySelectorAll("[data-flow]").forEach((item) => {
   item.addEventListener("click", () => openFlow(item.dataset.flow));
+});
+
+document.querySelectorAll("[data-hot-service]").forEach((item) => {
+  item.addEventListener("click", () => openHotServicePanel(item.dataset.hotService));
 });
 
 mallLevel1El?.addEventListener("change", renderMallLevel2);

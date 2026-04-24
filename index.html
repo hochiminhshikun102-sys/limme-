@@ -80,19 +80,19 @@
           <button class="view-all" data-page-jump="services">查看全部</button>
         </div>
         <div class="service-cards">
-          <button class="service-card card-pink" data-msg="轻医美项目列表已打开">
+          <button class="service-card card-pink" data-hot-service="medical">
             <strong>轻医美项目</strong>
             <small>专业医师定制方案</small>
           </button>
-          <button class="service-card card-blue" data-msg="中医调理列表已打开">
+          <button class="service-card card-blue" data-hot-service="tcm">
             <strong>中医调理</strong>
             <small>由内而外健康美</small>
           </button>
-          <button class="service-card card-purple" data-msg="上门服务列表已打开">
+          <button class="service-card card-purple" data-hot-service="homecare">
             <strong>上门服务</strong>
             <small>按摩推拿到家</small>
           </button>
-          <button class="service-card card-cyan" data-msg="瑜伽课程列表已打开">
+          <button class="service-card card-cyan" data-hot-service="yoga">
             <strong>瑜伽课程</strong>
             <small>线上线下随心练</small>
           </button>
@@ -314,6 +314,18 @@
         <button class="btn" data-msg="私密聊天房间已进入。">进入聊天</button>
         <button class="btn" data-msg="人设风格配置已打开。">设置人设</button>
         <button class="btn btn-close" data-close="boyfriend">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-hot-service" aria-hidden="true">
+    <div class="modal-content">
+      <h3 id="hot-service-title">热门服务</h3>
+      <div id="hot-service-content" class="list"></div>
+      <div class="actions">
+        <button class="btn" id="hot-service-main-action">立即进入</button>
+        <button class="btn" id="hot-service-sub-action">查看方案</button>
+        <button class="btn btn-close" data-close="hot-service">关闭</button>
       </div>
     </div>
   </div>
