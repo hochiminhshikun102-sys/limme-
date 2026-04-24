@@ -67,9 +67,9 @@
 
       <article class="card">
         <div class="quick-nav">
-          <button class="quick-item" data-msg="AI 扫脸测肤已启动"><span>📷</span><em>AI扫脸测肤</em></button>
-          <button class="quick-item" data-msg="Wardrobe 电子衣柜已打开"><span>🛍️</span><em>Wardrobe衣柜</em></button>
-          <button class="quick-item" data-msg="私密男友入口已打开"><span>💗</span><em>私密男友</em></button>
+          <button class="quick-item" data-modal="scan"><span>📷</span><em>AI扫脸测肤</em></button>
+          <button class="quick-item" data-modal="wardrobe"><span>🛍️</span><em>Wardrobe衣柜</em></button>
+          <button class="quick-item" data-modal="boyfriend"><span>💗</span><em>私密男友</em></button>
           <button class="quick-item" data-page-jump="orders"><span>📅</span><em>预约记录</em></button>
         </div>
       </article>
@@ -266,6 +266,54 @@
       <div class="actions">
         <button class="btn" id="ai-save-btn">保存配置</button>
         <button class="btn btn-close" data-close="ai">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-scan" aria-hidden="true">
+    <div class="modal-content">
+      <h3>AI扫脸测肤</h3>
+      <div class="list">
+        <div class="list-row">1. 对准正脸，保持自然光</div>
+        <div class="list-row">2. 采样 3 秒，生成肤质分析</div>
+        <div class="list-row">3. 输出护理建议和机构推荐</div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-msg="测肤采样已开始，请保持镜头稳定。">开始测肤</button>
+        <button class="btn" data-msg="肤质报告示例已打开。">查看报告示例</button>
+        <button class="btn btn-close" data-close="scan">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-wardrobe" aria-hidden="true">
+    <div class="modal-content">
+      <h3>Wardrobe衣柜</h3>
+      <div class="list">
+        <div class="list-row">衣物拍照录入</div>
+        <div class="list-row">按场景智能穿搭</div>
+        <div class="list-row">天气联动搭配建议</div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-msg="衣物拍照入口已打开。">新增衣物</button>
+        <button class="btn" data-msg="今日穿搭建议已生成。">一键搭配</button>
+        <button class="btn btn-close" data-close="wardrobe">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-boyfriend" aria-hidden="true">
+    <div class="modal-content">
+      <h3>私密男友</h3>
+      <div class="list">
+        <div class="list-row">情绪陪伴与日常聊天</div>
+        <div class="list-row">暖心提醒和鼓励话术</div>
+        <div class="list-row">专属人设与互动风格</div>
+      </div>
+      <div class="actions">
+        <button class="btn" data-msg="私密聊天房间已进入。">进入聊天</button>
+        <button class="btn" data-msg="人设风格配置已打开。">设置人设</button>
+        <button class="btn btn-close" data-close="boyfriend">关闭</button>
       </div>
     </div>
   </div>
