@@ -279,10 +279,12 @@ function setupVoiceConversation() {
 
   let isListening = false;
   let hasResultInSession = false;
+  let longPressTimer = null;
+  let pressStarted = false;
 
   const setVoiceBtn = (listening) => {
     if (voiceLabelEl) {
-      voiceLabelEl.textContent = listening ? "🎙️ 正在聆听...（点我结束）" : "🎤 点按开始说话";
+      voiceLabelEl.textContent = listening ? "🎙️ 松开结束并发送" : "🎤 长按呼叫小美";
     }
     voiceBtnEl.classList.toggle("is-listening", listening);
   };
@@ -350,13 +352,33 @@ function setupVoiceConversation() {
     }
   };
 
-  // Single interaction mode: click to start, click again to stop.
-  voiceBtnEl.addEventListener("click", () => {
-    if (isListening) {
-      stopListening();
-    } else {
+  const beginPress = () => {
+    if (pressStarted) return;
+    pressStarted = true;
+    longPressTimer = window.setTimeout(() => {
       startListening();
+    }, 180);
+  };
+
+  const endPress = () => {
+    if (!pressStarted) return;
+    pressStarted = false;
+    if (longPressTimer) {
+      window.clearTimeout(longPressTimer);
+      longPressTimer = null;
     }
+    stopListening();
+  };
+
+  voiceBtnEl.addEventListener("pointerdown", beginPress);
+  voiceBtnEl.addEventListener("pointerup", endPress);
+  voiceBtnEl.addEventListener("pointerleave", endPress);
+  voiceBtnEl.addEventListener("pointercancel", endPress);
+
+  voiceBtnEl.addEventListener("click", (event) => {
+    // Prevent short tap from toggling; this mimics WeChat hold-to-talk.
+    event.preventDefault();
+    if (!isListening) showToast("请长按按钮开始说话，松开后发送识别。");
   });
 }
 
