@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>柠美LIMME</title>
-  <link rel="stylesheet" href="./styles.css?v=14">
+  <link rel="stylesheet" href="./styles.css?v=16">
 </head>
 <body>
   <div class="app-shell">
@@ -42,6 +42,9 @@
       </div>
     </div>
   </header>
+  <button id="global-home-btn" class="global-home-btn" aria-label="返回首页">
+    <img src="./assets/share-logo.png?v=6" alt="返回首页">
+  </button>
 
   <main class="container">
     <section id="page-home" class="page active">
@@ -67,9 +70,9 @@
 
       <article class="card">
         <div class="quick-nav">
-          <button class="quick-item" data-modal="scan"><span>📷</span><em>美美看脸</em></button>
-          <button class="quick-item" data-modal="wardrobe"><span>🛍️</span><em>Wardrobe衣柜</em></button>
-          <button class="quick-item" data-modal="boyfriend"><span>💗</span><em>私密男友</em></button>
+          <button class="quick-item" data-open-flow-page="faceflow"><span>📷</span><em>美美看脸</em></button>
+          <button class="quick-item" data-page-jump="wardrobe"><span>🛍️</span><em>Wardrobe衣柜</em></button>
+          <button class="quick-item" data-page-jump="boyfriend"><span>💗</span><em>私密男友</em></button>
           <button class="quick-item" data-page-jump="orders"><span>📅</span><em>预约记录</em></button>
         </div>
       </article>
@@ -205,6 +208,46 @@
       </article>
     </section>
 
+    <section id="page-wardrobe" class="page">
+      <article class="card">
+        <h2>Wardrobe衣柜</h2>
+        <p>衣物录入 · 场景穿搭 · 天气联动</p>
+      </article>
+      <article class="card">
+        <h3>功能入口</h3>
+        <div class="list">
+          <div class="list-row">衣物拍照录入</div>
+          <div class="list-row">按场景智能穿搭</div>
+          <div class="list-row">天气联动搭配建议</div>
+        </div>
+        <div class="actions">
+          <button class="btn" data-msg="衣物拍照入口已打开。">新增衣物</button>
+          <button class="btn" data-msg="今日穿搭建议已生成。">一键搭配</button>
+          <button class="btn" data-page-jump="home">回到首页</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="page-boyfriend" class="page">
+      <article class="card">
+        <h2>私密男友</h2>
+        <p>情绪陪伴 · 专属人设 · 互动风格</p>
+      </article>
+      <article class="card">
+        <h3>功能入口</h3>
+        <div class="list">
+          <div class="list-row">情绪陪伴与日常聊天</div>
+          <div class="list-row">暖心提醒和鼓励话术</div>
+          <div class="list-row">专属人设与互动风格</div>
+        </div>
+        <div class="actions">
+          <button class="btn" data-msg="私密聊天房间已进入。">进入聊天</button>
+          <button class="btn" data-msg="人设风格配置已打开。">设置人设</button>
+          <button class="btn" data-page-jump="home">回到首页</button>
+        </div>
+      </article>
+    </section>
+
     <section id="page-orders" class="page">
       <article class="card">
         <h2>订单・核销中心</h2>
@@ -308,54 +351,6 @@
     </div>
   </div>
 
-  <div class="modal" id="modal-scan" aria-hidden="true">
-    <div class="modal-content">
-      <h3>美美看脸</h3>
-      <div class="list">
-        <div class="list-row">1. 对准正脸，保持自然光</div>
-        <div class="list-row">2. 采样 3 秒，生成肤质分析</div>
-        <div class="list-row">3. 输出护理建议和机构推荐</div>
-      </div>
-      <div class="actions">
-        <button class="btn" data-open-flow-page="faceflow">开始测肤</button>
-        <button class="btn" data-msg="肤质报告示例已打开。">查看报告示例</button>
-        <button class="btn btn-close" data-close="scan">关闭</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="modal-wardrobe" aria-hidden="true">
-    <div class="modal-content">
-      <h3>Wardrobe衣柜</h3>
-      <div class="list">
-        <div class="list-row">衣物拍照录入</div>
-        <div class="list-row">按场景智能穿搭</div>
-        <div class="list-row">天气联动搭配建议</div>
-      </div>
-      <div class="actions">
-        <button class="btn" data-msg="衣物拍照入口已打开。">新增衣物</button>
-        <button class="btn" data-msg="今日穿搭建议已生成。">一键搭配</button>
-        <button class="btn btn-close" data-close="wardrobe">关闭</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="modal-boyfriend" aria-hidden="true">
-    <div class="modal-content">
-      <h3>私密男友</h3>
-      <div class="list">
-        <div class="list-row">情绪陪伴与日常聊天</div>
-        <div class="list-row">暖心提醒和鼓励话术</div>
-        <div class="list-row">专属人设与互动风格</div>
-      </div>
-      <div class="actions">
-        <button class="btn" data-msg="私密聊天房间已进入。">进入聊天</button>
-        <button class="btn" data-msg="人设风格配置已打开。">设置人设</button>
-        <button class="btn btn-close" data-close="boyfriend">关闭</button>
-      </div>
-    </div>
-  </div>
-
   <div class="modal" id="modal-hot-service" aria-hidden="true">
     <div class="modal-content">
       <h3 id="hot-service-title">热门服务</h3>
@@ -368,7 +363,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=4"></script>
+  <script src="./app.js?v=6"></script>
   </div>
 </body>
 </html>

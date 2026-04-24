@@ -1,4 +1,4 @@
-const pages = ["home", "clinic", "services", "orders", "profile", "faceflow", "tcmflow"];
+const pages = ["home", "clinic", "services", "orders", "profile", "faceflow", "tcmflow", "wardrobe", "boyfriend"];
 const toastEl = document.getElementById("toast");
 const mallLevel1El = document.getElementById("mall-level-1");
 const mallLevel2El = document.getElementById("mall-level-2");
@@ -14,6 +14,7 @@ const aiEndpointEl = document.getElementById("ai-endpoint");
 const aiModelEl = document.getElementById("ai-model");
 const aiKeyEl = document.getElementById("ai-key");
 const aiSaveBtnEl = document.getElementById("ai-save-btn");
+const globalHomeBtnEl = document.getElementById("global-home-btn");
 const hotServiceTitleEl = document.getElementById("hot-service-title");
 const hotServiceContentEl = document.getElementById("hot-service-content");
 const hotServiceMainActionEl = document.getElementById("hot-service-main-action");
@@ -686,6 +687,17 @@ function setupAIConfig() {
 }
 
 function openHotServicePanel(key) {
+  if (key === "medical") {
+    faceFlowController?.reset();
+    switchPage("faceflow");
+    return;
+  }
+  if (key === "tcm") {
+    tcmFlowController?.reset();
+    switchPage("tcmflow");
+    return;
+  }
+
   const cfg = hotServiceMap[key];
   if (!cfg || !hotServiceTitleEl || !hotServiceContentEl) return;
 
@@ -701,18 +713,6 @@ function openHotServicePanel(key) {
   if (hotServiceMainActionEl) {
     hotServiceMainActionEl.textContent = cfg.mainAction;
     hotServiceMainActionEl.onclick = () => {
-      if (key === "medical") {
-        faceFlowController?.reset();
-        closeModal("hot-service");
-        switchPage("faceflow");
-        return;
-      }
-      if (key === "tcm") {
-        tcmFlowController?.reset();
-        closeModal("hot-service");
-        switchPage("tcmflow");
-        return;
-      }
       showToast(`${cfg.mainAction} 已打开`);
     };
   }
@@ -900,6 +900,14 @@ document.querySelectorAll(".modal").forEach((modalEl) => {
     const modalName = modalEl.id.replace("modal-", "");
     closeModal(modalName);
   });
+});
+
+globalHomeBtnEl?.addEventListener("click", () => {
+  document.querySelectorAll(".modal.show").forEach((modalEl) => {
+    const modalName = modalEl.id.replace("modal-", "");
+    closeModal(modalName);
+  });
+  switchPage("home");
 });
 
 document.querySelectorAll(".mini-tab").forEach((tab) => {
