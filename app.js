@@ -1,4 +1,4 @@
-const pages = ["home", "clinic", "services", "orders", "profile"];
+const pages = ["home", "clinic", "services", "orders", "profile", "faceflow", "tcmflow"];
 const toastEl = document.getElementById("toast");
 const mallLevel1El = document.getElementById("mall-level-1");
 const mallLevel2El = document.getElementById("mall-level-2");
@@ -22,6 +22,14 @@ const clinicTitleEl = document.getElementById("clinic-title");
 const clinicListEl = document.getElementById("clinic-list");
 const flowTitleEl = document.getElementById("flow-title");
 const flowStepsEl = document.getElementById("flow-steps");
+const faceflowTitleEl = document.getElementById("faceflow-step-title");
+const faceflowContentEl = document.getElementById("faceflow-step-content");
+const faceflowPrevEl = document.getElementById("faceflow-prev");
+const faceflowNextEl = document.getElementById("faceflow-next");
+const tcmflowTitleEl = document.getElementById("tcmflow-step-title");
+const tcmflowContentEl = document.getElementById("tcmflow-step-content");
+const tcmflowPrevEl = document.getElementById("tcmflow-prev");
+const tcmflowNextEl = document.getElementById("tcmflow-next");
 const avatarFallback = "./assets/share-logo.png?v=6";
 const AI_CONFIG_KEY = "limme_ai_config_v1";
 const CHAT_LIMIT = 4;
@@ -170,6 +178,29 @@ const serviceMenuData = {
   ]
 };
 
+const faceFlowSteps = [
+  { title: "步骤1：美美看脸检测", rows: ["正脸采样 3 秒", "生成基础肤质报告"] },
+  { title: "步骤2：检测报告", rows: ["展示水润度/毛孔/弹性指标", "给出改善建议"] },
+  { title: "步骤3：医生问答", rows: ["进入数字人医生问答", "补充你的皮肤诉求"] },
+  { title: "步骤4：定制方案", rows: ["生成护肤与治疗步骤", "给出预期效果周期"] },
+  { title: "步骤5：套餐选择", rows: ["基础版/进阶版/尊享版", "查看套餐价格与内容"] },
+  { title: "步骤6：预约时间", rows: ["选择日期和时段", "确认到店时间"] },
+  { title: "步骤7：确认订单", rows: ["核对机构、项目和金额", "提交订单"] },
+  { title: "步骤8：支付", rows: ["选择支付方式", "完成支付"] },
+  { title: "步骤9：预约成功", rows: ["生成核销码", "支持分享与到店提醒"] }
+];
+
+const tcmFlowSteps = [
+  { title: "步骤1：机构选择", rows: ["按评分/距离筛选中医心理机构", "查看机构资质"] },
+  { title: "步骤2：医师详情", rows: ["查看医师擅长方向", "选择情志问题类型"] },
+  { title: "步骤3：开始问诊", rows: ["输入症状与诉求", "数字人实时问答"] },
+  { title: "步骤4：体质报告", rows: ["输出体质结果", "标注主要风险点"] },
+  { title: "步骤5：调理方案", rows: ["作息、食疗、情绪训练建议", "展示执行进度"] },
+  { title: "步骤6：到店预约", rows: ["选择机构与时间", "确认提交预约"] },
+  { title: "步骤7：复诊提醒", rows: ["按日期设置提醒", "持续跟踪恢复情况"] },
+  { title: "步骤8：服务评价", rows: ["星级评分+文字评价", "形成服务闭环"] }
+];
+
 function showToast(message) {
   toastEl.textContent = message;
   toastEl.classList.add("show");
@@ -189,6 +220,27 @@ function getAIConfig() {
 
 function setAIConfig(cfg) {
   localStorage.setItem(AI_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function createFlowRenderer(steps, titleEl, contentEl) {
+  let current = 0;
+  const render = () => {
+    if (!titleEl || !contentEl) return;
+    const step = steps[current];
+    titleEl.textContent = `${step.title}（${current + 1}/${steps.length}）`;
+    contentEl.innerHTML = "";
+    step.rows.forEach((row) => {
+      const item = document.createElement("div");
+      item.className = "list-row";
+      item.textContent = row;
+      contentEl.appendChild(item);
+    });
+  };
+  return {
+    next() { current = Math.min(current + 1, steps.length - 1); render(); },
+    prev() { current = Math.max(current - 1, 0); render(); },
+    reset() { current = 0; render(); }
+  };
 }
 
 function appendChatBubble(text, role = "ai") {
@@ -427,7 +479,21 @@ function openHotServicePanel(key) {
 
   if (hotServiceMainActionEl) {
     hotServiceMainActionEl.textContent = cfg.mainAction;
-    hotServiceMainActionEl.onclick = () => showToast(`${cfg.mainAction} 已打开`);
+    hotServiceMainActionEl.onclick = () => {
+      if (key === "medical") {
+        faceFlowController?.reset();
+        closeModal("hot-service");
+        switchPage("faceflow");
+        return;
+      }
+      if (key === "tcm") {
+        tcmFlowController?.reset();
+        closeModal("hot-service");
+        switchPage("tcmflow");
+        return;
+      }
+      showToast(`${cfg.mainAction} 已打开`);
+    };
   }
   if (hotServiceSubActionEl) {
     hotServiceSubActionEl.textContent = cfg.subAction;
@@ -488,12 +554,19 @@ function renderClinic(type) {
       <p>${item.meta}</p>
       <p>${item.doctor}</p>
       <div class="actions">
-        <button class="btn" data-msg="已进入 ${item.name} 数字人面诊页">进入面诊</button>
+        <button class="btn" data-open-flow-page="${type === "mind" ? "tcmflow" : "faceflow"}">进入面诊</button>
         <button class="btn" data-msg="已打开 ${item.name} 方案页">查看方案</button>
       </div>
     `;
     row.querySelectorAll("[data-msg]").forEach((btn) => {
       btn.addEventListener("click", () => showToast(btn.dataset.msg));
+    });
+    row.querySelectorAll("[data-open-flow-page]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (btn.dataset.openFlowPage === "faceflow") faceFlowController?.reset();
+        if (btn.dataset.openFlowPage === "tcmflow") tcmFlowController?.reset();
+        switchPage(btn.dataset.openFlowPage);
+      });
     });
     clinicListEl.appendChild(row);
   });
@@ -588,6 +661,14 @@ document.querySelectorAll("[data-page-jump]").forEach((item) => {
   });
 });
 
+document.querySelectorAll("[data-open-flow-page]").forEach((item) => {
+  item.addEventListener("click", () => {
+    if (item.dataset.openFlowPage === "faceflow") faceFlowController?.reset();
+    if (item.dataset.openFlowPage === "tcmflow") tcmFlowController?.reset();
+    switchPage(item.dataset.openFlowPage);
+  });
+});
+
 document.querySelectorAll("[data-close]").forEach((item) => {
   item.addEventListener("click", () => closeModal(item.dataset.close));
 });
@@ -631,3 +712,12 @@ renderServicePanel("health");
 setupVoiceConversation();
 setupAIConfig();
 setupScriptedChatReveal();
+
+const faceFlowController = createFlowRenderer(faceFlowSteps, faceflowTitleEl, faceflowContentEl);
+const tcmFlowController = createFlowRenderer(tcmFlowSteps, tcmflowTitleEl, tcmflowContentEl);
+faceFlowController.reset();
+tcmFlowController.reset();
+faceflowPrevEl?.addEventListener("click", () => faceFlowController.prev());
+faceflowNextEl?.addEventListener("click", () => faceFlowController.next());
+tcmflowPrevEl?.addEventListener("click", () => tcmFlowController.prev());
+tcmflowNextEl?.addEventListener("click", () => tcmFlowController.next());

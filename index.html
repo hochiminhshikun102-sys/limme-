@@ -111,8 +111,8 @@
       <article class="card">
         <h2>核心业务流程链路</h2>
         <div class="actions">
-          <button class="btn" data-flow="medical">医美面诊流程</button>
-          <button class="btn" data-flow="tcm">中医心理咨询流程</button>
+          <button class="btn" data-open-flow-page="faceflow">医美面诊流程</button>
+          <button class="btn" data-open-flow-page="tcmflow">中医心理咨询流程</button>
           <button class="btn" data-flow="referral">闺蜜分销流程</button>
         </div>
       </article>
@@ -163,6 +163,38 @@
           <select id="mall-level-1" aria-label="商城一级分类"></select>
           <select id="mall-level-2" aria-label="商城二级分类"></select>
           <div id="mall-results" class="result-list"></div>
+        </div>
+      </article>
+    </section>
+
+    <section id="page-faceflow" class="page">
+      <article class="card">
+        <h2>美美看脸链路</h2>
+        <p>检测 -> 报告 -> 医生问答 -> 定制方案 -> 套餐 -> 时间 -> 订单 -> 支付 -> 成功</p>
+      </article>
+      <article class="card">
+        <h3 id="faceflow-step-title">步骤</h3>
+        <div id="faceflow-step-content" class="list"></div>
+        <div class="actions">
+          <button class="btn" id="faceflow-prev">上一步</button>
+          <button class="btn" id="faceflow-next">下一步</button>
+          <button class="btn" data-page-jump="home">回到首页</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="page-tcmflow" class="page">
+      <article class="card">
+        <h2>中医心理问诊链路</h2>
+        <p>机构选择 -> 医师详情 -> 开始问诊 -> 体质报告 -> 调理方案 -> 到店预约 -> 复诊提醒 -> 服务评价</p>
+      </article>
+      <article class="card">
+        <h3 id="tcmflow-step-title">步骤</h3>
+        <div id="tcmflow-step-content" class="list"></div>
+        <div class="actions">
+          <button class="btn" id="tcmflow-prev">上一步</button>
+          <button class="btn" id="tcmflow-next">下一步</button>
+          <button class="btn" data-page-jump="home">回到首页</button>
         </div>
       </article>
     </section>
@@ -279,7 +311,7 @@
         <div class="list-row">3. 输出护理建议和机构推荐</div>
       </div>
       <div class="actions">
-        <button class="btn" data-msg="测肤采样已开始，请保持镜头稳定。">开始测肤</button>
+        <button class="btn" data-open-flow-page="faceflow">开始测肤</button>
         <button class="btn" data-msg="肤质报告示例已打开。">查看报告示例</button>
         <button class="btn btn-close" data-close="scan">关闭</button>
       </div>
