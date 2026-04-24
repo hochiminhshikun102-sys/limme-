@@ -847,12 +847,12 @@ async function recompressDataUrl(dataUrl, quality, maxW = 720) {
       const scale = Math.min(1, maxW / img.width);
       c.width = Math.round(img.width * scale);
       c.height = Math.round(img.height * scale);
-      const x = c.getContext("2d");
-      if (!x) {
+      const ctx2 = c.getContext("2d");
+      if (!ctx2) {
         resolve(dataUrl);
         return;
       }
-      x.drawImage(img, 0, 0, c.width, c.height);
+      ctx2.drawImage(img, 0, 0, c.width, c.height);
       try {
         resolve(c.toDataURL("image/jpeg", quality));
       } catch {
@@ -862,6 +862,78 @@ async function recompressDataUrl(dataUrl, quality, maxW = 720) {
     img.onerror = () => resolve(dataUrl);
     img.src = dataUrl;
   });
+}
+
+const VISION_SYSTEM_PROMPT = "你是柠美LIMME的护肤与形象顾问。用户会上传一张正脸照片（可能素颜或淡妆）。请结合图像给出观察与护理建议：避免医学诊断与处方用语，不做疾病确诊，风险提示要温和。输出中文。";
+
+const VISION_USER_PROMPT = "请结合这张照片进行肤质与护肤方向的解读。按以下小节输出（控制在520字以内）：\n1) 可见的整体印象（肤光、均匀度等）\n2) 可能的水油与毛孔感受（谨慎表述）\n3) 泛红/暗沉等线索（谨慎表述，强调光线与拍摄角度影响）\n4) 日常护理与防晒建议\n5) 何时建议线下皮肤科或医美面诊\n若图像无法辨认面部或被遮挡，请直接说明无法分析并给出拍摄建议。";
+
+function shouldRetryVisionWithTextOnlyPayload(message) {
+  const m = String(message || "");
+  return /deserialize|unknown variant|image_url|expected `text`|expected \"text\"|column \d+|invalid type|expected a string|found an array/i.test(m);
+}
+
+async function postVisionChat(cfg, payload) {
+  const response = await fetch(cfg.endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${cfg.apiKey}`
+    },
+    body: JSON.stringify(payload)
+  });
+  const raw = await response.text();
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    const snippet = raw.slice(0, 220).replace(/\s+/g, " ");
+    throw new Error(`接口返回非 JSON（HTTP ${response.status}）：${snippet}`);
+  }
+  if (!response.ok) {
+    const msg = data?.error?.message || data?.message || `请求失败（HTTP ${response.status}）`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+function buildOpenAiImageUrlMessages(url) {
+  return [
+    { role: "system", content: VISION_SYSTEM_PROMPT },
+    {
+      role: "user",
+      content: [
+        { type: "text", text: VISION_USER_PROMPT },
+        { type: "image_url", image_url: { url } }
+      ]
+    }
+  ];
+}
+
+function buildDualTextOnlyMessages(url) {
+  return [
+    { role: "system", content: VISION_SYSTEM_PROMPT },
+    {
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: `${VISION_USER_PROMPT}\n\n（以下为 JPEG 的 data URL，请按图像理解并分析；若你无法处理 data URL，请说明。）`
+        },
+        { type: "text", text: url }
+      ]
+    }
+  ];
+}
+
+function buildStringUserMessage(url) {
+  return [
+    { role: "system", content: VISION_SYSTEM_PROMPT },
+    {
+      role: "user",
+      content: `${VISION_USER_PROMPT}\n\n---\n以下为一行 JPEG data URL，请按图像理解：\n${url}`
+    }
+  ];
 }
 
 async function getVisionSkinReport(imageDataUrl) {
@@ -877,53 +949,40 @@ async function getVisionSkinReport(imageDataUrl) {
     if (!next || next === url) break;
     url = next;
   }
-  const response = await fetch(cfg.endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${cfg.apiKey}`
-    },
-    body: JSON.stringify({
-      model: cfg.model,
-      messages: [
-        {
-          role: "system",
-          content: "你是柠美LIMME的护肤与形象顾问。用户会上传一张正脸照片（可能素颜或淡妆）。请结合图像给出观察与护理建议：避免医学诊断与处方用语，不做疾病确诊，风险提示要温和。输出中文。"
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: "请结合这张照片进行肤质与护肤方向的解读。按以下小节输出（控制在520字以内）：\n1) 可见的整体印象（肤光、均匀度等）\n2) 可能的水油与毛孔感受（谨慎表述）\n3) 泛红/暗沉等线索（谨慎表述，强调光线与拍摄角度影响）\n4) 日常护理与防晒建议\n5) 何时建议线下皮肤科或医美面诊\n若图像无法辨认面部或被遮挡，请直接说明无法分析并给出拍摄建议。"
-            },
-            {
-              type: "image_url",
-              image_url: { url }
-            }
-          ]
-        }
-      ],
-      temperature: 0.45,
-      max_tokens: 900
-    })
-  });
-  const raw = await response.text();
-  let data;
-  try {
-    data = JSON.parse(raw);
-  } catch {
-    throw new Error(`接口返回非 JSON（HTTP ${response.status}）`);
+
+  const strategies = [
+    { label: "openai_image_url", build: () => buildOpenAiImageUrlMessages(url) },
+    { label: "dual_text", build: () => buildDualTextOnlyMessages(url) },
+    { label: "string_user", build: () => buildStringUserMessage(url) }
+  ];
+
+  let lastError = null;
+  for (let i = 0; i < strategies.length; i += 1) {
+    try {
+      const data = await postVisionChat(cfg, {
+        model: cfg.model,
+        messages: strategies[i].build(),
+        temperature: 0.45,
+        max_tokens: 900
+      });
+      const text = extractChatCompletionText(data);
+      if (!text) {
+        throw new Error("模型未返回文字。");
+      }
+      if (i > 0) {
+        showToast("当前接口不支持 image_url，已自动改用「纯 text」兼容格式提交。");
+      }
+      return text;
+    } catch (err) {
+      lastError = err;
+      const msg = err?.message || "";
+      if (i < strategies.length - 1 && shouldRetryVisionWithTextOnlyPayload(msg)) {
+        continue;
+      }
+      throw err;
+    }
   }
-  if (!response.ok) {
-    const msg = data?.error?.message || data?.message || `请求失败（HTTP ${response.status}）`;
-    throw new Error(msg);
-  }
-  const text = extractChatCompletionText(data);
-  if (!text) {
-    throw new Error("模型未返回文字。请确认所用模型支持 image_url 多模态（纯文本模型无法看图）。");
-  }
-  return text;
+  throw lastError || new Error("看图分析失败");
 }
 
 function setFaceflowVisionReport(text) {
