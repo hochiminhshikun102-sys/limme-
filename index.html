@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>柠美LIMME</title>
-  <link rel="stylesheet" href="./styles.css?v=27">
+  <link rel="stylesheet" href="./styles.css?v=28">
 </head>
 <body>
   <div class="app-shell">
@@ -464,10 +464,13 @@
   <div class="modal" id="modal-ai" aria-hidden="true">
     <div class="modal-content">
       <h3>AI 对话配置</h3>
+      <p class="ai-config-hint muted">与首页「小美」语音、私密男友数字人、看图能力共用。请求体为 OpenAI 兼容 <code>chat/completions</code>。Key 只存在本机浏览器，请勿写进代码仓库。</p>
+      <p class="ai-config-hint muted">火山方舟（豆包 Seed 等）：Endpoint 一般为 <code>https://ark.cn-beijing.volces.com/api/v3/chat/completions</code>；「模型」填控制台里的模型英文名或 <code>ep-…</code> 接入点 ID。</p>
+      <button type="button" class="btn ai-preset-btn" id="ai-preset-ark">填入火山方舟示例（豆包 Seed）</button>
       <div class="ai-config-form">
-        <input id="ai-endpoint" type="text" placeholder="API Endpoint，例如 https://api.openai.com/v1/chat/completions">
-        <input id="ai-model" type="text" placeholder="模型名（看图需多模态），如 gpt-4o-mini / deepseek-v4-pro">
-        <input id="ai-key" type="password" placeholder="API Key（仅保存在本浏览器）">
+        <input id="ai-endpoint" type="text" placeholder="Endpoint，如 https://ark.cn-beijing.volces.com/api/v3/chat/completions">
+        <input id="ai-model" type="text" placeholder="模型 ID，如 doubao-seed-2-0-pro-260215 或 ep-xxxx（以控制台为准）">
+        <input id="ai-key" type="password" placeholder="API Key（方舟控制台创建的 API Key，勿外泄）">
       </div>
       <div class="actions">
         <button class="btn" id="ai-save-btn">保存配置</button>
@@ -551,7 +554,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=18"></script>
+  <script src="./app.js?v=19"></script>
   </div>
 </body>
 </html>

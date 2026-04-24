@@ -692,6 +692,10 @@ function setupVoiceConversation() {
   });
 }
 
+const ARK_CHAT_COMPLETIONS_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions";
+/** 方舟控制台展示的模型接入点名可能不同，失败时请改为控制台中的 ID（含 ep- 前缀时只填在模型框即可） */
+const ARK_DOUBAO_SEED2_EXAMPLE_MODEL = "doubao-seed-2-0-pro-260215";
+
 function setupAIConfig() {
   const cfg = getAIConfig();
   if (aiEndpointEl) aiEndpointEl.value = cfg.endpoint || "https://api.openai.com/v1/chat/completions";
@@ -699,6 +703,11 @@ function setupAIConfig() {
   if (aiKeyEl) aiKeyEl.value = cfg.apiKey || "";
 
   aiConfigBtnEl?.addEventListener("click", () => openModal("ai"));
+  document.getElementById("ai-preset-ark")?.addEventListener("click", () => {
+    if (aiEndpointEl) aiEndpointEl.value = ARK_CHAT_COMPLETIONS_URL;
+    if (aiModelEl) aiModelEl.value = ARK_DOUBAO_SEED2_EXAMPLE_MODEL;
+    showToast("已填入方舟北京区示例；模型名请与控制台一致，Key 请粘贴后点保存。");
+  });
   aiSaveBtnEl?.addEventListener("click", () => {
     const next = {
       endpoint: aiEndpointEl?.value?.trim(),
@@ -706,7 +715,7 @@ function setupAIConfig() {
       apiKey: aiKeyEl?.value?.trim()
     };
     setAIConfig(next);
-    showToast("AI配置已保存，后续语音将调用真实大模型。");
+    showToast("AI 配置已保存：小美语音、私密男友、看图等将共用该接口。");
     closeModal("ai");
   });
 }

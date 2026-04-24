@@ -1301,6 +1301,25 @@ body {
   padding-bottom: 1px;
 }
 
+.ai-config-hint {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0 0 8px;
+  color: var(--muted);
+}
+
+.ai-config-hint code {
+  font-size: 12px;
+  word-break: break-all;
+  color: #5c4a52;
+}
+
+.ai-preset-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
 .modal {
   display: none;
   position: fixed;
