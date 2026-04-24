@@ -20,6 +20,13 @@ const flowTitleEl = document.getElementById("flow-title");
 const flowStepsEl = document.getElementById("flow-steps");
 const avatarFallback = "./assets/share-logo.png?v=6";
 const AI_CONFIG_KEY = "limme_ai_config_v1";
+const CHAT_LIMIT = 4;
+const scriptedChat = [
+  { role: "ai", text: "嗨，我是你的小美AI管家，有什么可以帮你的吗？" },
+  { role: "user", text: "我想做个皮肤检测" },
+  { role: "ai", text: "好的，我可以帮你安排AI皮肤检测。你是想立即开始，还是先看报告示例？" },
+  { role: "user", text: "立即开始" }
+];
 
 const clinicData = {
   beauty: {
@@ -159,45 +166,18 @@ function appendChatBubble(text, role = "ai") {
   bubble.className = `bubble ${role === "user" ? "bubble-user" : "bubble-ai"}`;
   bubble.textContent = text;
   chatListEl.appendChild(bubble);
-  chatListEl.scrollTop = chatListEl.scrollHeight;
+  while (chatListEl.children.length > CHAT_LIMIT) {
+    chatListEl.removeChild(chatListEl.firstElementChild);
+  }
 }
 
-function setupChatAutoLoop() {
+function setupScriptedChatReveal() {
   if (!chatListEl) return;
-
-  let timer = null;
-  let pausedUntil = 0;
-  const step = 34;
-  const intervalMs = 2600;
-
-  const tick = () => {
-    const now = Date.now();
-    if (now < pausedUntil) return;
-
-    const maxScroll = chatListEl.scrollHeight - chatListEl.clientHeight;
-    if (maxScroll <= 0) return;
-
-    if (chatListEl.scrollTop >= maxScroll - 6) {
-      chatListEl.scrollTop = 0;
-      pausedUntil = Date.now() + 1800;
-    } else {
-      chatListEl.scrollBy({ top: step, behavior: "smooth" });
-    }
-  };
-
-  timer = window.setInterval(tick, intervalMs);
-
-  const pauseLoop = () => {
-    pausedUntil = Date.now() + 6500;
-  };
-
-  chatListEl.addEventListener("mouseenter", pauseLoop);
-  chatListEl.addEventListener("mouseleave", pauseLoop);
-  chatListEl.addEventListener("touchstart", pauseLoop, { passive: true });
-  chatListEl.addEventListener("wheel", pauseLoop, { passive: true });
-
-  window.addEventListener("beforeunload", () => {
-    if (timer) window.clearInterval(timer);
+  chatListEl.innerHTML = "";
+  scriptedChat.forEach((item, idx) => {
+    window.setTimeout(() => {
+      appendChatBubble(item.text, item.role);
+    }, idx * 1700 + 500);
   });
 }
 
@@ -590,4 +570,4 @@ renderMallLevel1();
 renderServicePanel("health");
 setupVoiceConversation();
 setupAIConfig();
-setupChatAutoLoop();
+setupScriptedChatReveal();

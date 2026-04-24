@@ -230,8 +230,7 @@ body {
 .chat-list {
   display: grid;
   gap: 14px;
-  max-height: 310px;
-  overflow-y: auto;
+  min-height: 250px;
   scroll-behavior: smooth;
 }
 
@@ -250,6 +249,9 @@ body {
   border-radius: 18px;
   font-size: 18px;
   line-height: 1.5;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: bubbleIn 260ms ease-out forwards;
 }
 
 .bubble-ai {
@@ -262,6 +264,13 @@ body {
   background: #f684ad;
   color: #fff;
   border-radius: 18px 18px 6px 18px;
+}
+
+@keyframes bubbleIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .floating-avatar {
