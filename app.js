@@ -36,6 +36,10 @@ const faceflowSkipDetectEl = document.getElementById("faceflow-skip-detect");
 const faceDetectVideoEl = document.getElementById("face-detect-video");
 const faceDetectLiveLabelEl = document.getElementById("face-detect-live-label");
 const faceDetectProcessingEl = document.getElementById("face-detect-processing");
+const faceDetectProcessingLabelEl = document.getElementById("face-detect-processing-label");
+const faceflowVisionReportCardEl = document.getElementById("faceflow-vision-report-card");
+const faceflowVisionReportTextEl = document.getElementById("faceflow-vision-report-text");
+const faceflowVisionReportCloseEl = document.getElementById("faceflow-vision-report-close");
 const tcmflowTitleEl = document.getElementById("tcmflow-step-title");
 const tcmflowContentEl = document.getElementById("tcmflow-step-content");
 const tcmflowPrevEl = document.getElementById("tcmflow-prev");
@@ -43,7 +47,7 @@ const tcmflowNextEl = document.getElementById("tcmflow-next");
 const tcmflowTimelineEl = document.getElementById("tcmflow-timeline");
 const avatarFallback = "./assets/share-logo.png?v=6";
 const AI_CONFIG_KEY = "limme_ai_config_v1";
-const FACE_CAPTURE_STORAGE_KEY = "limme_face_capture_v1";
+const SKIN_VISION_REPORT_KEY = "limme_skin_vision_report_v1";
 const CHAT_LIMIT = 4;
 const scriptedChat = [
   { role: "ai", text: "嗨，我是你的小美AI管家，有什么可以帮你的吗？" },
@@ -796,70 +800,140 @@ function resetFaceDetectUi() {
   if (faceDetectLiveLabelEl) faceDetectLiveLabelEl.textContent = "预览未开启";
 }
 
-function sampleFaceRegionMetrics(videoEl) {
+function captureFaceFrameDataUrl(videoEl) {
   const w = videoEl.videoWidth;
   const h = videoEl.videoHeight;
   if (!w || !h) return null;
   const canvas = document.createElement("canvas");
-  const maxSide = 480;
-  const scale = Math.min(1, maxSide / Math.max(w, h));
-  const cw = Math.round(w * scale);
-  const ch = Math.round(h * scale);
-  canvas.width = cw;
-  canvas.height = ch;
+  const maxW = 960;
+  const scale = Math.min(1, maxW / w);
+  const tw = Math.round(w * scale);
+  const th = Math.round(h * scale);
+  canvas.width = tw;
+  canvas.height = th;
   const ctx = canvas.getContext("2d");
   if (!ctx) return null;
-  ctx.drawImage(videoEl, 0, 0, cw, ch);
-  const cx = cw / 2;
-  const cy = ch / 2;
-  const rx = cw * 0.22;
-  const ry = ch * 0.32;
-  const imgData = ctx.getImageData(0, 0, cw, ch);
-  const d = imgData.data;
-  let brightSum = 0;
-  let redExcess = 0;
-  let n = 0;
-  for (let y = 0; y < ch; y += 1) {
-    for (let x = 0; x < cw; x += 1) {
-      const nx = (x - cx) / rx;
-      const ny = (y - cy) / ry;
-      if (nx * nx + ny * ny > 1) continue;
-      const i = (y * cw + x) * 4;
-      const rv = d[i];
-      const gv = d[i + 1];
-      const bv = d[i + 2];
-      brightSum += 0.299 * rv + 0.587 * gv + 0.114 * bv;
-      redExcess += rv - 0.5 * (gv + bv);
-      n += 1;
-    }
-  }
-  if (!n) return null;
-  const brightness = brightSum / n;
-  const redness = redExcess / n;
-  let thumbDataUrl = "";
+  ctx.save();
+  ctx.translate(tw, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(videoEl, 0, 0, tw, th);
+  ctx.restore();
   try {
-    thumbDataUrl = canvas.toDataURL("image/jpeg", 0.82);
+    return canvas.toDataURL("image/jpeg", 0.82);
   } catch {
-    thumbDataUrl = "";
+    return null;
   }
-  return { brightness, redness, thumbDataUrl };
 }
 
-function describeBasicSkin(metrics) {
-  const { brightness, redness } = metrics;
-  const tone = brightness > 172
-    ? "整体偏亮（注意防晒与氧化）"
-    : brightness < 118
-      ? "整体偏暗（可做温和提亮）"
-      : "明暗关系较均衡";
-  const flush = redness > 18
-    ? "面颊偏红感略高（光线/敏感都会影响）"
-    : "潮红干扰较低";
-  return {
-    tone,
-    flush,
-    hint: `采样亮度约 ${Math.round(brightness)}（本地算法演示，非医疗诊断）`
-  };
+function extractChatCompletionText(data) {
+  const msg = data?.choices?.[0]?.message;
+  if (!msg) return "";
+  if (typeof msg.content === "string" && msg.content.trim()) return msg.content.trim();
+  if (Array.isArray(msg.content)) {
+    return msg.content
+      .filter((c) => c?.type === "text" && c.text)
+      .map((c) => c.text.trim())
+      .join("\n")
+      .trim();
+  }
+  return "";
+}
+
+async function recompressDataUrl(dataUrl, quality, maxW = 720) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      const scale = Math.min(1, maxW / img.width);
+      c.width = Math.round(img.width * scale);
+      c.height = Math.round(img.height * scale);
+      const x = c.getContext("2d");
+      if (!x) {
+        resolve(dataUrl);
+        return;
+      }
+      x.drawImage(img, 0, 0, c.width, c.height);
+      try {
+        resolve(c.toDataURL("image/jpeg", quality));
+      } catch {
+        resolve(dataUrl);
+      }
+    };
+    img.onerror = () => resolve(dataUrl);
+    img.src = dataUrl;
+  });
+}
+
+async function getVisionSkinReport(imageDataUrl) {
+  const cfg = getAIConfig();
+  if (!cfg.endpoint || !cfg.model || !cfg.apiKey) {
+    throw new Error("请先在右上角「⚙️」填写 API Endpoint、模型名和 API Key。");
+  }
+  let url = imageDataUrl;
+  let q = 0.82;
+  while (url.length > 5_500_000 && q > 0.48) {
+    q -= 0.06;
+    const next = await recompressDataUrl(url, q, 640);
+    if (!next || next === url) break;
+    url = next;
+  }
+  const response = await fetch(cfg.endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${cfg.apiKey}`
+    },
+    body: JSON.stringify({
+      model: cfg.model,
+      messages: [
+        {
+          role: "system",
+          content: "你是柠美LIMME的护肤与形象顾问。用户会上传一张正脸照片（可能素颜或淡妆）。请结合图像给出观察与护理建议：避免医学诊断与处方用语，不做疾病确诊，风险提示要温和。输出中文。"
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "请结合这张照片进行肤质与护肤方向的解读。按以下小节输出（控制在520字以内）：\n1) 可见的整体印象（肤光、均匀度等）\n2) 可能的水油与毛孔感受（谨慎表述）\n3) 泛红/暗沉等线索（谨慎表述，强调光线与拍摄角度影响）\n4) 日常护理与防晒建议\n5) 何时建议线下皮肤科或医美面诊\n若图像无法辨认面部或被遮挡，请直接说明无法分析并给出拍摄建议。"
+            },
+            {
+              type: "image_url",
+              image_url: { url }
+            }
+          ]
+        }
+      ],
+      temperature: 0.45,
+      max_tokens: 900
+    })
+  });
+  const raw = await response.text();
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    throw new Error(`接口返回非 JSON（HTTP ${response.status}）`);
+  }
+  if (!response.ok) {
+    const msg = data?.error?.message || data?.message || `请求失败（HTTP ${response.status}）`;
+    throw new Error(msg);
+  }
+  const text = extractChatCompletionText(data);
+  if (!text) {
+    throw new Error("模型未返回文字。请确认所用模型支持 image_url 多模态（纯文本模型无法看图）。");
+  }
+  return text;
+}
+
+function setFaceflowVisionReport(text) {
+  if (faceflowVisionReportTextEl) faceflowVisionReportTextEl.textContent = text;
+  faceflowVisionReportCardEl?.classList.remove("is-hidden");
+  try {
+    localStorage.setItem(SKIN_VISION_REPORT_KEY, JSON.stringify({ at: Date.now(), text }));
+  } catch {
+    // ignore quota
+  }
 }
 
 function showFaceflowDetectEntry() {
@@ -1070,6 +1144,7 @@ const tcmFlowController = createFlowRenderer(tcmFlowSteps, tcmflowTitleEl, tcmfl
 function enterFaceflowWithDetect() {
   faceFlowController?.reset();
   switchPage("faceflow");
+  faceflowVisionReportCardEl?.classList.add("is-hidden");
   showFaceflowDetectEntry();
 }
 
@@ -1119,29 +1194,29 @@ faceflowCaptureDetectEl?.addEventListener("click", async () => {
     showToast("画面尚未就绪，请稍候再拍。");
     return;
   }
-  const metrics = sampleFaceRegionMetrics(faceDetectVideoEl);
-  if (!metrics || !metrics.thumbDataUrl) {
-    showToast("取样失败，请调整光线或距离后重试。");
+  const imageDataUrl = captureFaceFrameDataUrl(faceDetectVideoEl);
+  if (!imageDataUrl) {
+    showToast("截图失败，请重试。");
     return;
   }
-  const desc = describeBasicSkin(metrics);
+  if (faceDetectProcessingLabelEl) faceDetectProcessingLabelEl.textContent = "AI 正在读图分析…";
   faceDetectProcessingEl?.classList.remove("is-hidden");
   faceflowCaptureDetectEl.disabled = true;
   try {
-    localStorage.setItem(FACE_CAPTURE_STORAGE_KEY, JSON.stringify({
-      at: Date.now(),
-      brightness: metrics.brightness,
-      redness: metrics.redness,
-      thumbDataUrl: metrics.thumbDataUrl,
-      summary: `${desc.tone}；${desc.flush}`
-    }));
-  } catch {
-    // Storage full or disabled
+    const text = await getVisionSkinReport(imageDataUrl);
+    setFaceflowVisionReport(text);
+    showToast("已根据照片生成「看图报告」。");
+    hideFaceflowDetectShowMain();
+  } catch (err) {
+    showToast(err?.message || "看图分析失败");
+    faceflowCaptureDetectEl.disabled = !faceVideoStream;
+  } finally {
+    faceDetectProcessingEl?.classList.add("is-hidden");
   }
-  await new Promise((resolve) => window.setTimeout(resolve, 900));
-  faceDetectProcessingEl?.classList.add("is-hidden");
-  showToast(`检测完成：${desc.tone}；${desc.flush}。${desc.hint}`);
-  hideFaceflowDetectShowMain();
+});
+
+faceflowVisionReportCloseEl?.addEventListener("click", () => {
+  faceflowVisionReportCardEl?.classList.add("is-hidden");
 });
 
 faceflowSkipDetectEl?.addEventListener("click", () => {

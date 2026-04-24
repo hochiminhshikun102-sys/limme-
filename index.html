@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>柠美LIMME</title>
-  <link rel="stylesheet" href="./styles.css?v=20">
+  <link rel="stylesheet" href="./styles.css?v=21">
 </head>
 <body>
   <div class="app-shell">
@@ -187,7 +187,7 @@
               <span id="face-detect-live-label">预览未开启</span>
             </div>
             <div id="face-detect-processing" class="face-detect-processing is-hidden" role="status" aria-live="polite">
-              <div class="face-detect-processing-inner">正在分析肤质采样…</div>
+              <div class="face-detect-processing-inner" id="face-detect-processing-label">AI 正在读图分析…</div>
             </div>
           </div>
           <p class="face-detect-hint">请将面部置于椭圆线内，下巴微收，避免逆光与遮挡。</p>
@@ -204,6 +204,13 @@
         </article>
       </div>
       <div id="faceflow-main" class="faceflow-main is-hidden">
+        <article class="card is-hidden" id="faceflow-vision-report-card">
+          <h3>AI 看图报告</h3>
+          <div id="faceflow-vision-report-text" class="faceflow-vision-report-text"></div>
+          <div class="actions faceflow-vision-report-actions">
+            <button type="button" class="btn" id="faceflow-vision-report-close">收起</button>
+          </div>
+        </article>
         <article class="card">
           <h2>美美看脸链路</h2>
           <p>检测 -> 报告 -> 医生问答 -> 定制方案 -> 套餐 -> 时间 -> 订单 -> 支付 -> 成功</p>
@@ -375,7 +382,7 @@
       <h3>AI 对话配置</h3>
       <div class="ai-config-form">
         <input id="ai-endpoint" type="text" placeholder="API Endpoint，例如 https://api.openai.com/v1/chat/completions">
-        <input id="ai-model" type="text" placeholder="模型名，例如 gpt-4o-mini / deepseek-chat">
+        <input id="ai-model" type="text" placeholder="模型名（看图需多模态），如 gpt-4o-mini / deepseek-v4-pro">
         <input id="ai-key" type="password" placeholder="API Key（仅保存在本浏览器）">
       </div>
       <div class="actions">
@@ -397,7 +404,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=10"></script>
+  <script src="./app.js?v=11"></script>
   </div>
 </body>
 </html>
