@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=33">
+  <link rel="stylesheet" href="./styles.css?v=34">
 </head>
 <body>
   <div class="app-shell">
@@ -105,22 +105,125 @@
         </div>
       </article>
 
-      <article class="card">
-        <h2>AI 智能提醒</h2>
-        <div class="list">
-          <div class="list-row">经期提醒 · 已开启</div>
-          <div class="list-row">预约提醒 · 待赴约 2 项</div>
-          <div class="list-row">佣金到账提醒 · 今日 1 条</div>
+      <article class="card health-hub-card">
+        <div class="section-title">
+          <h2>健康管理</h2>
+        </div>
+        <p class="health-hub-lead">睡眠、饮食与日常节律的小工具入口，后续可接入手环与云端档案。</p>
+        <div class="health-hub-grid" role="navigation" aria-label="健康管理工具">
+          <button type="button" class="health-hub-item" data-page-jump="health-sleep"><span class="health-hub-ico" aria-hidden="true">🌙</span><em>睡眠监测</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-calories"><span class="health-hub-ico" aria-hidden="true">🥗</span><em>卡路里计算器</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-water"><span class="health-hub-ico" aria-hidden="true">💧</span><em>每日饮水</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-exercise"><span class="health-hub-ico" aria-hidden="true">🚶</span><em>运动与步数</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-weight"><span class="health-hub-ico" aria-hidden="true">⚖️</span><em>体重管理</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-cycle"><span class="health-hub-ico" aria-hidden="true">📅</span><em>经期助手</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-breathe"><span class="health-hub-ico" aria-hidden="true">🌿</span><em>呼吸放松</em></button>
+          <button type="button" class="health-hub-item" data-page-jump="health-medicine"><span class="health-hub-ico" aria-hidden="true">💊</span><em>用药提醒</em></button>
         </div>
       </article>
+    </section>
 
-      <article class="card">
-        <h2>核心业务流程链路</h2>
-        <div class="actions">
-          <button class="btn" data-open-flow-page="faceflow">医美面诊流程</button>
-          <button class="btn" data-open-flow-page="tcmflow">中医心理咨询流程</button>
-          <button class="btn" data-flow="referral">闺蜜分销流程</button>
-        </div>
+    <section id="page-health-sleep" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>睡眠监测</h2>
+        <p class="health-subpage-desc">记录入睡/起床时间、估算睡眠时长，并可设置就寝提醒（后续可对接手环深睡数据）。</p>
+        <ul class="health-subpage-list">
+          <li>今晚目标就寝时间：23:30</li>
+          <li>近 7 日平均睡眠：约 7.2 小时（示意）</li>
+          <li>晨间小结：醒来先喝温水，避免立刻刷手机。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-calories" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>卡路里计算器</h2>
+        <p class="health-subpage-desc">按常见食材与份量估算一餐热量，帮助外食与减脂期心里有数（可后续接入食物库 API）。</p>
+        <ul class="health-subpage-list">
+          <li>示例：米饭 150g ≈ 180 kcal</li>
+          <li>示例：鸡胸肉 100g ≈ 120 kcal</li>
+          <li>建议：三餐先记大概，再逐步细化。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-water" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>每日饮水</h2>
+        <p class="health-subpage-desc">设定每日毫升目标，随手打卡完成度，适合久坐与空调房补水提醒。</p>
+        <ul class="health-subpage-list">
+          <li>推荐目标：1.6–2.0 L / 天（因人而异）</li>
+          <li>今日进度：8 杯中的 5 杯（示意）</li>
+          <li>小技巧：每餐前先喝半杯温水。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-exercise" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>运动与步数</h2>
+        <p class="health-subpage-desc">汇总活动时长、步数与中等强度运动周目标（后续可同步手机健康或手表）。</p>
+        <ul class="health-subpage-list">
+          <li>本周中等强度目标：150 分钟</li>
+          <li>今日步数：约 6,200 步（示意）</li>
+          <li>碎片时间：每坐 1 小时起身活动 3 分钟。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-weight" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>体重管理</h2>
+        <p class="health-subpage-desc">记录体重与 BMI 趋势，配合饮食与运动模块一起看变化（非医疗诊断）。</p>
+        <ul class="health-subpage-list">
+          <li>建议固定早晨空腹、同一秤测量。</li>
+          <li>BMI 仅作参考，特殊人群请遵医嘱。</li>
+          <li>周趋势比单日数字更有意义。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-cycle" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>经期助手</h2>
+        <p class="health-subpage-desc">周期日历、下次预测与症状备忘，贴近女性日常健康管理（可后续加密云同步）。</p>
+        <ul class="health-subpage-list">
+          <li>记录经期开始/结束日更准确。</li>
+          <li>可备注痛经、情绪与睡眠关联。</li>
+          <li>异常出血请及时就医。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-breathe" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>呼吸放松</h2>
+        <p class="health-subpage-desc">短时呼吸引导（如 4-7-8、箱式呼吸），适合睡前与焦虑时刻（可后续加语音引导）。</p>
+        <ul class="health-subpage-list">
+          <li>4-7-8：吸 4 秒 · 屏 7 秒 · 呼 8 秒</li>
+          <li>每天 2–3 轮即可，勿过度换气。</li>
+          <li>胸闷心悸请先停止并咨询医生。</li>
+        </ul>
+      </article>
+    </section>
+
+    <section id="page-health-medicine" class="page">
+      <article class="card health-subpage-card">
+        <button type="button" class="health-subpage-back" data-page-jump="home" aria-label="返回首页">← 返回</button>
+        <h2>用药提醒</h2>
+        <p class="health-subpage-desc">维生素、保健品或长期用药的时间与剂量备忘，降低漏服概率（不能替代医嘱）。</p>
+        <ul class="health-subpage-list">
+          <li>建议与固定日常动作绑定（如早餐后）。</li>
+          <li>多种药请核对相互作用说明。</li>
+          <li>不适或过敏请立即停药并就医。</li>
+        </ul>
       </article>
     </section>
 
@@ -587,7 +690,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=26"></script>
+  <script src="./app.js?v=27"></script>
   </div>
 </body>
 </html>

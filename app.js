@@ -1,4 +1,22 @@
-const pages = ["home", "clinic", "services", "orders", "profile", "faceflow", "tcmflow", "wardrobe", "boyfriend"];
+const pages = [
+  "home",
+  "clinic",
+  "services",
+  "orders",
+  "profile",
+  "faceflow",
+  "tcmflow",
+  "wardrobe",
+  "boyfriend",
+  "health-sleep",
+  "health-calories",
+  "health-water",
+  "health-exercise",
+  "health-weight",
+  "health-cycle",
+  "health-breathe",
+  "health-medicine"
+];
 const toastEl = document.getElementById("toast");
 const mallLevel1El = document.getElementById("mall-level-1");
 const mallLevel2El = document.getElementById("mall-level-2");
