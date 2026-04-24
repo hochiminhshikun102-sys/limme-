@@ -175,11 +175,13 @@ body {
 .voice-pulse {
   fill: none;
   stroke: #ffffff;
-  stroke-width: 1.8;
+  stroke-width: 1.6;
   stroke-linecap: round;
-  stroke-dasharray: 20 560;
-  animation: voicePulseOrbit 2s linear infinite;
+  stroke-dasharray: 24 620;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95));
+  animation: voicePulseOrbit 2.1s linear infinite, voicePulseBreath 2.9s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
 }
 
 .voice-btn.is-listening {
@@ -196,13 +198,25 @@ body {
 
 .voice-btn.is-listening .voice-pulse {
   stroke: rgba(255, 169, 214, 1);
-  animation-duration: 1.15s;
+  animation-duration: 1.15s, 1.35s;
   filter: drop-shadow(0 0 7px rgba(255, 102, 177, 0.95));
 }
 
 @keyframes voicePulseOrbit {
   from { stroke-dashoffset: 0; }
-  to { stroke-dashoffset: -580; }
+  to { stroke-dashoffset: -644; }
+}
+
+/* Irregular breathing: subtle random-like size/brightness variation. */
+@keyframes voicePulseBreath {
+  0%   { stroke-width: 1.4; opacity: 0.72; transform: scale(0.992); }
+  14%  { stroke-width: 1.9; opacity: 0.96; transform: scale(1.008); }
+  27%  { stroke-width: 1.5; opacity: 0.78; transform: scale(0.995); }
+  43%  { stroke-width: 2.1; opacity: 1;    transform: scale(1.012); }
+  58%  { stroke-width: 1.45; opacity: 0.74; transform: scale(0.99); }
+  73%  { stroke-width: 1.85; opacity: 0.93; transform: scale(1.007); }
+  87%  { stroke-width: 1.55; opacity: 0.8;  transform: scale(0.996); }
+  100% { stroke-width: 1.4; opacity: 0.72; transform: scale(0.992); }
 }
 
 .chat-card {
