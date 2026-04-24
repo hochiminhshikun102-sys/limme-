@@ -158,9 +158,9 @@ body {
 
 .voice-orbit {
   position: absolute;
-  inset: -9px;
-  width: calc(100% + 18px);
-  height: calc(100% + 18px);
+  inset: -5px;
+  width: calc(100% + 10px);
+  height: calc(100% + 10px);
   overflow: visible;
   pointer-events: none;
   z-index: 1;
@@ -175,11 +175,11 @@ body {
 .voice-pulse {
   fill: none;
   stroke: #ffffff;
-  stroke-width: 1.6;
+  stroke-width: 3.2;
   stroke-linecap: round;
-  stroke-dasharray: 24 620;
+  stroke-dasharray: 48 620;
   filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.95));
-  animation: voicePulseOrbit 2.1s linear infinite, voicePulseBreath 2.9s ease-in-out infinite;
+  animation: voicePulseOrbit 6.3s linear infinite, voicePulseBreath 8.7s ease-in-out infinite;
   transform-origin: center;
   transform-box: fill-box;
 }
@@ -198,7 +198,7 @@ body {
 
 .voice-btn.is-listening .voice-pulse {
   stroke: rgba(255, 169, 214, 1);
-  animation-duration: 1.15s, 1.35s;
+  animation-duration: 3.45s, 4.05s;
   filter: drop-shadow(0 0 7px rgba(255, 102, 177, 0.95));
 }
 
@@ -209,14 +209,14 @@ body {
 
 /* Irregular breathing: subtle random-like size/brightness variation. */
 @keyframes voicePulseBreath {
-  0%   { stroke-width: 1.4; opacity: 0.72; transform: scale(0.992); }
-  14%  { stroke-width: 1.9; opacity: 0.96; transform: scale(1.008); }
-  27%  { stroke-width: 1.5; opacity: 0.78; transform: scale(0.995); }
-  43%  { stroke-width: 2.1; opacity: 1;    transform: scale(1.012); }
-  58%  { stroke-width: 1.45; opacity: 0.74; transform: scale(0.99); }
-  73%  { stroke-width: 1.85; opacity: 0.93; transform: scale(1.007); }
-  87%  { stroke-width: 1.55; opacity: 0.8;  transform: scale(0.996); }
-  100% { stroke-width: 1.4; opacity: 0.72; transform: scale(0.992); }
+  0%   { stroke-width: 2.8; opacity: 0.72; transform: scale(0.996); }
+  14%  { stroke-width: 3.8; opacity: 0.96; transform: scale(1.01); }
+  27%  { stroke-width: 3; opacity: 0.78; transform: scale(0.998); }
+  43%  { stroke-width: 4.2; opacity: 1;    transform: scale(1.014); }
+  58%  { stroke-width: 2.9; opacity: 0.74; transform: scale(0.994); }
+  73%  { stroke-width: 3.7; opacity: 0.93; transform: scale(1.009); }
+  87%  { stroke-width: 3.1; opacity: 0.8;  transform: scale(0.997); }
+  100% { stroke-width: 2.8; opacity: 0.72; transform: scale(0.996); }
 }
 
 .chat-card {
