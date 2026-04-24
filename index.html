@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>柠美LIMME</title>
-  <link rel="stylesheet" href="./styles.css?v=21">
+  <link rel="stylesheet" href="./styles.css?v=25">
 </head>
 <body>
   <div class="app-shell">
@@ -250,23 +250,54 @@
     </section>
 
     <section id="page-wardrobe" class="page">
-      <article class="card">
-        <h2>Wardrobe衣柜</h2>
-        <p>衣物录入 · 场景穿搭 · 天气联动</p>
-      </article>
-      <article class="card">
-        <h3>功能入口</h3>
-        <div class="list">
-          <div class="list-row">衣物拍照录入</div>
-          <div class="list-row">按场景智能穿搭</div>
-          <div class="list-row">天气联动搭配建议</div>
+      <div class="wardrobe-shell">
+        <header class="wardrobe-topbar">
+          <button type="button" class="wardrobe-back" id="wardrobe-back" aria-label="返回">←</button>
+          <div class="wardrobe-topbar-title">柠美 LIMME</div>
+          <button type="button" class="wardrobe-avatar-btn" id="wardrobe-avatar-btn" aria-label="我的">
+            <img src="./assets/share-logo.png?v=6" width="36" height="36" alt="">
+          </button>
+        </header>
+
+        <div class="wardrobe-cats" role="tablist" aria-label="衣柜分类">
+          <button type="button" class="wardrobe-cat wardrobe-cat--pink" data-wardrobe-cat="tops" aria-selected="false">
+            <span class="wardrobe-cat-ico" aria-hidden="true">🧥</span>
+            <span class="wardrobe-cat-txt">上衣</span>
+          </button>
+          <button type="button" class="wardrobe-cat wardrobe-cat--cream" data-wardrobe-cat="bottoms" aria-selected="false">
+            <span class="wardrobe-cat-ico" aria-hidden="true">👖</span>
+            <span class="wardrobe-cat-txt">下装</span>
+          </button>
+          <button type="button" class="wardrobe-cat wardrobe-cat--pink active" data-wardrobe-cat="dresses" aria-selected="true">
+            <span class="wardrobe-cat-ico" aria-hidden="true">👗</span>
+            <span class="wardrobe-cat-txt">裙装</span>
+          </button>
+          <button type="button" class="wardrobe-cat wardrobe-cat--cream" data-wardrobe-cat="accessories" aria-selected="false">
+            <span class="wardrobe-cat-ico" aria-hidden="true">📿</span>
+            <span class="wardrobe-cat-txt">配饰</span>
+          </button>
         </div>
-        <div class="actions">
-          <button class="btn" data-msg="衣物拍照入口已打开。">新增衣物</button>
-          <button class="btn" data-msg="今日穿搭建议已生成。">一键搭配</button>
-          <button class="btn" data-page-jump="home">回到首页</button>
-        </div>
-      </article>
+
+        <h2 class="wardrobe-rec-heading">今日智能穿搭推荐</h2>
+
+        <article class="wardrobe-rec-card" id="wardrobe-rec-card">
+          <div class="wardrobe-rec-visual" id="wardrobe-rec-visual" data-wardrobe-cat="dresses" role="img" aria-label="推荐搭配示意"></div>
+          <div class="wardrobe-rec-body">
+            <div class="wardrobe-rec-style" id="wardrobe-rec-style">休闲约会风 |</div>
+            <div class="wardrobe-rec-temp" id="wardrobe-rec-temp">适宜 22-26°C</div>
+            <button type="button" class="wardrobe-chip-btn" id="wardrobe-view-outfit">查看搭配</button>
+          </div>
+        </article>
+
+        <section class="wardrobe-my-items" aria-labelledby="wardrobe-my-heading">
+          <h3 class="wardrobe-my-heading" id="wardrobe-my-heading">我的衣物</h3>
+          <p id="wardrobe-items-empty" class="wardrobe-my-empty">暂无记录，点击下方「添加衣物」可从相册或拍照录入。</p>
+          <ul id="wardrobe-items-list" class="wardrobe-items-list" hidden></ul>
+        </section>
+
+        <input type="file" id="wardrobe-add-input" class="is-hidden" accept="image/*" multiple>
+        <button type="button" class="wardrobe-add-main" id="wardrobe-add-clothes">添加衣物</button>
+      </div>
     </section>
 
     <section id="page-boyfriend" class="page">
@@ -404,7 +435,53 @@
     </div>
   </div>
 
-  <script src="./app.js?v=12"></script>
+  <div class="modal" id="modal-wardrobe-outfit" aria-hidden="true">
+    <div class="modal-content">
+      <h3 id="wardrobe-outfit-title">搭配详情</h3>
+      <div id="wardrobe-outfit-body" class="wardrobe-outfit-body"></div>
+      <div class="actions">
+        <button class="btn btn-close" data-close="wardrobe-outfit">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-wardrobe-add" aria-hidden="true">
+    <div class="modal-content wardrobe-add-modal">
+      <h3>添加衣物</h3>
+      <p class="muted">照片经压缩后仅存于本机浏览器，便于本地备忘；请勿用于敏感隐私场景。</p>
+      <div class="wardrobe-add-actions">
+        <button type="button" class="btn wardrobe-add-choice" id="wardrobe-pick-gallery">从相册选择</button>
+        <button type="button" class="btn wardrobe-add-choice wardrobe-add-choice--primary" id="wardrobe-pick-camera">拍照添加</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn btn-close" data-close="wardrobe-add">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="modal-wardrobe-capture" aria-hidden="true">
+    <div class="modal-content wardrobe-capture-modal">
+      <h3>拍摄衣物</h3>
+      <p class="muted">默认前置取景；点画面右上角图标可切换为后置拍摄衣物。</p>
+      <div class="wardrobe-capture-stage">
+        <video id="wardrobe-capture-video" class="wardrobe-capture-video" playsinline muted autoplay></video>
+        <button type="button" class="wardrobe-capture-flip" id="wardrobe-capture-flip" aria-label="切换为后置摄像头" title="切换为后置">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 2v6h-6" />
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+            <path d="M3 22v-6h6" />
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+          </svg>
+        </button>
+      </div>
+      <div class="actions wardrobe-capture-actions">
+        <button type="button" class="btn wardrobe-add-choice wardrobe-add-choice--primary" id="wardrobe-capture-shutter">拍摄</button>
+        <button type="button" class="btn" id="wardrobe-capture-close">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./app.js?v=16"></script>
   </div>
 </body>
 </html>

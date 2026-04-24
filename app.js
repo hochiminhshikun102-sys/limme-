@@ -755,6 +755,10 @@ function switchPage(pageName) {
   if (pageName !== "faceflow") {
     stopFaceCamera();
   }
+  ["wardrobe-capture", "wardrobe-add"].forEach((modalName) => {
+    const el = document.getElementById(`modal-${modalName}`);
+    if (el?.classList.contains("show")) closeModal(modalName);
+  });
   pages.forEach((name) => {
     const pageEl = document.getElementById(`page-${name}`);
     const tabEl = document.querySelector(`.tab-item[data-page="${name}"]`);
@@ -762,6 +766,16 @@ function switchPage(pageName) {
     pageEl?.classList.toggle("active", active);
     tabEl?.classList.toggle("active", active);
   });
+}
+
+let wardrobeCaptureStream = null;
+
+function stopWardrobeCaptureIfAny() {
+  if (!wardrobeCaptureStream) return;
+  wardrobeCaptureStream.getTracks().forEach((track) => track.stop());
+  wardrobeCaptureStream = null;
+  const wardrobeCapVideoEl = document.getElementById("wardrobe-capture-video");
+  if (wardrobeCapVideoEl) wardrobeCapVideoEl.srcObject = null;
 }
 
 function openModal(modalName) {
@@ -772,6 +786,7 @@ function openModal(modalName) {
 }
 
 function closeModal(modalName) {
+  if (modalName === "wardrobe-capture") stopWardrobeCaptureIfAny();
   const modalEl = document.getElementById(`modal-${modalName}`);
   if (!modalEl) return;
   modalEl.classList.remove("show");
@@ -1292,3 +1307,363 @@ faceflowPrevEl?.addEventListener("click", () => {
 faceflowNextEl?.addEventListener("click", () => faceFlowController.next());
 tcmflowPrevEl?.addEventListener("click", () => tcmFlowController.prev());
 tcmflowNextEl?.addEventListener("click", () => tcmFlowController.next());
+
+const WARDROBE_ITEMS_KEY = "limme_wardrobe_items_v1";
+
+const wardrobeCatalog = {
+  tops: {
+    style: "舒适通勤风 |",
+    tempRange: "适宜 18-24°C",
+    title: "上装搭配方案",
+    outfitDetail:
+      "上装：燕麦色针织开衫 + 白T内搭\n\n下装建议：浅蓝九分直筒裤或米色西装裤\n鞋履：乐福鞋或小白鞋\n场景：办公室、咖啡约会\n贴士：早晚温差大时可叠穿薄风衣。"
+  },
+  bottoms: {
+    style: "利落城市风 |",
+    tempRange: "适宜 16-22°C",
+    title: "下装搭配方案",
+    outfitDetail:
+      "下装：高腰直筒牛仔裤或垂感阔腿裤\n上装建议：修身打底 + 短款外套\n鞋履：短靴或运动鞋\n场景：逛街、城市出行\n贴士：裤长刚到鞋面显腿长。"
+  },
+  dresses: {
+    style: "休闲约会风 |",
+    tempRange: "适宜 22-26°C",
+    title: "裙装推荐搭配",
+    outfitDetail:
+      "裙装：粉上衣 + 白色过膝半裙（示意配色）\n鞋履：裸色玛丽珍或小跟凉鞋\n包袋：小号腋下包或链条包\n场合：周末约会、拍照出街\n贴士：图为配色参考，可在「添加衣物」中上传你的真实单品。"
+  },
+  accessories: {
+    style: "点睛精致风 |",
+    tempRange: "适宜 20-28°C",
+    title: "配饰点亮方案",
+    outfitDetail:
+      "配饰：细项链 + 小耳环 + 腰带或丝巾\n服装建议：素色套装会让配饰更出挑\n场景：宴会、商务社交\n贴士：金银不要混搭过多，选一种主色金属。"
+  }
+};
+
+const wardrobeBackEl = document.getElementById("wardrobe-back");
+const wardrobeAvatarBtnEl = document.getElementById("wardrobe-avatar-btn");
+const wardrobeViewOutfitEl = document.getElementById("wardrobe-view-outfit");
+const wardrobeAddClothesEl = document.getElementById("wardrobe-add-clothes");
+const wardrobeAddInputEl = document.getElementById("wardrobe-add-input");
+const wardrobeRecStyleEl = document.getElementById("wardrobe-rec-style");
+const wardrobeRecTempEl = document.getElementById("wardrobe-rec-temp");
+const wardrobeRecVisualEl = document.getElementById("wardrobe-rec-visual");
+const wardrobeOutfitTitleEl = document.getElementById("wardrobe-outfit-title");
+const wardrobeOutfitBodyEl = document.getElementById("wardrobe-outfit-body");
+const wardrobeCatBtns = document.querySelectorAll("#page-wardrobe [data-wardrobe-cat]");
+const wardrobeItemsListEl = document.getElementById("wardrobe-items-list");
+const wardrobeItemsEmptyEl = document.getElementById("wardrobe-items-empty");
+const wardrobePickGalleryEl = document.getElementById("wardrobe-pick-gallery");
+const wardrobePickCameraEl = document.getElementById("wardrobe-pick-camera");
+const wardrobeCaptureModalEl = document.getElementById("modal-wardrobe-capture");
+const wardrobeCaptureVideoEl = document.getElementById("wardrobe-capture-video");
+const wardrobeCaptureShutterEl = document.getElementById("wardrobe-capture-shutter");
+const wardrobeCaptureCloseEl = document.getElementById("wardrobe-capture-close");
+const wardrobeCaptureFlipEl = document.getElementById("wardrobe-capture-flip");
+
+let currentWardrobeCat = "dresses";
+/** @type {"user" | "environment"} */
+let wardrobeCaptureFacingMode = "user";
+
+function decodeImageFromFile(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      resolve(null);
+    };
+    img.src = url;
+  });
+}
+
+async function fileToThumbDataUrl(file) {
+  const img = await decodeImageFromFile(file);
+  if (!img || !img.width) return null;
+  const maxW = 140;
+  const w = Math.min(maxW, img.width);
+  const h = Math.round((img.height * w) / img.width);
+  const canvas = document.createElement("canvas");
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return null;
+  ctx.drawImage(img, 0, 0, w, h);
+  let q = 0.55;
+  let data = "";
+  for (let i = 0; i < 5; i++) {
+    data = canvas.toDataURL("image/jpeg", q);
+    if (data.length <= 96000) break;
+    q -= 0.1;
+  }
+  return data.length > 120000 ? null : data;
+}
+
+function getWardrobeItems() {
+  try {
+    const raw = localStorage.getItem(WARDROBE_ITEMS_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveWardrobeItems(items) {
+  try {
+    localStorage.setItem(WARDROBE_ITEMS_KEY, JSON.stringify(items.slice(0, 200)));
+  } catch {
+    showToast("本地存储失败，请检查浏览器存储空间或删除部分衣物。");
+  }
+}
+
+async function addWardrobeItemsFromFiles(fileList) {
+  const files = Array.from(fileList || []).filter((f) => f && f.name);
+  if (!files.length) return;
+  const items = getWardrobeItems();
+  const baseTs = Date.now();
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const thumb = await fileToThumbDataUrl(file);
+    items.unshift({
+      name: file.name,
+      ts: baseTs + i,
+      kind: "image",
+      ...(thumb ? { thumb } : {})
+    });
+  }
+  saveWardrobeItems(items);
+  renderWardrobeItemsList();
+  showToast(`已添加 ${files.length} 件衣物`);
+}
+
+function renderWardrobeItemsList() {
+  if (!wardrobeItemsListEl || !wardrobeItemsEmptyEl) return;
+  const items = getWardrobeItems();
+  if (!items.length) {
+    wardrobeItemsEmptyEl.hidden = false;
+    wardrobeItemsListEl.hidden = true;
+    wardrobeItemsListEl.innerHTML = "";
+    return;
+  }
+  wardrobeItemsEmptyEl.hidden = true;
+  wardrobeItemsListEl.hidden = false;
+  wardrobeItemsListEl.innerHTML = "";
+  items.forEach((item, index) => {
+    const li = document.createElement("li");
+    li.className = "wardrobe-item";
+    let thumbEl;
+    if (item.thumb) {
+      thumbEl = document.createElement("img");
+      thumbEl.className = "wardrobe-item-thumb";
+      thumbEl.src = item.thumb;
+      thumbEl.alt = "";
+    } else {
+      thumbEl = document.createElement("div");
+      thumbEl.className = "wardrobe-item-thumb wardrobe-item-thumb--ph";
+      thumbEl.setAttribute("aria-hidden", "true");
+      thumbEl.textContent = "👔";
+    }
+    const meta = document.createElement("div");
+    meta.className = "wardrobe-item-meta";
+    const nameEl = document.createElement("div");
+    nameEl.className = "wardrobe-item-name";
+    nameEl.textContent = item.name || "未命名";
+    const dateEl = document.createElement("div");
+    dateEl.className = "wardrobe-item-date";
+    const d = item.ts ? new Date(item.ts) : new Date();
+    dateEl.textContent = d.toLocaleString("zh-CN", {
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    meta.append(nameEl, dateEl);
+    const rm = document.createElement("button");
+    rm.type = "button";
+    rm.className = "wardrobe-item-remove";
+    rm.setAttribute("aria-label", "删除");
+    rm.dataset.wardrobeRemoveIndex = String(index);
+    rm.textContent = "×";
+    li.append(thumbEl, meta, rm);
+    wardrobeItemsListEl.appendChild(li);
+  });
+}
+
+function removeWardrobeItemAtIndex(index) {
+  const items = getWardrobeItems();
+  if (index < 0 || index >= items.length) return;
+  items.splice(index, 1);
+  saveWardrobeItems(items);
+  renderWardrobeItemsList();
+  showToast("已删除");
+}
+
+function updateWardrobeFlipButtonLabel() {
+  if (!wardrobeCaptureFlipEl) return;
+  const isUser = wardrobeCaptureFacingMode === "user";
+  wardrobeCaptureFlipEl.setAttribute("aria-label", isUser ? "切换为后置摄像头" : "切换为前置摄像头");
+  wardrobeCaptureFlipEl.title = isUser ? "切换为后置" : "切换为前置";
+}
+
+async function startWardrobeCapturePreview() {
+  if (!wardrobeCaptureVideoEl) return;
+  stopWardrobeCaptureIfAny();
+  if (!navigator.mediaDevices?.getUserMedia) {
+    showToast("当前环境不支持摄像头，请使用相册添加。");
+    closeModal("wardrobe-capture");
+    return;
+  }
+  const requestStream = (facing) =>
+    navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: facing }, width: { ideal: 720 } },
+      audio: false
+    });
+  try {
+    wardrobeCaptureStream = await requestStream(wardrobeCaptureFacingMode);
+  } catch {
+    if (wardrobeCaptureFacingMode === "environment") {
+      try {
+        wardrobeCaptureFacingMode = "user";
+        wardrobeCaptureStream = await requestStream("user");
+        showToast("后置不可用，已切回前置。");
+      } catch {
+        showToast("无法打开摄像头，请检查权限或改用相册。");
+        closeModal("wardrobe-capture");
+        return;
+      }
+    } else {
+      showToast("无法打开摄像头，请检查权限或改用相册。");
+      closeModal("wardrobe-capture");
+      return;
+    }
+  }
+  try {
+    wardrobeCaptureVideoEl.srcObject = wardrobeCaptureStream;
+    await wardrobeCaptureVideoEl.play();
+    updateWardrobeFlipButtonLabel();
+  } catch {
+    showToast("预览启动失败，请重试。");
+    closeModal("wardrobe-capture");
+  }
+}
+
+function setActiveWardrobeCat(cat) {
+  wardrobeCatBtns.forEach((btn) => {
+    const on = btn.dataset.wardrobeCat === cat;
+    btn.classList.toggle("active", on);
+    btn.setAttribute("aria-selected", on ? "true" : "false");
+  });
+}
+
+function renderWardrobeRecommendation(cat) {
+  const d = wardrobeCatalog[cat];
+  if (!d || !wardrobeRecStyleEl) return;
+  currentWardrobeCat = cat;
+  setActiveWardrobeCat(cat);
+  wardrobeRecStyleEl.textContent = d.style;
+  if (wardrobeRecTempEl) wardrobeRecTempEl.textContent = d.tempRange;
+  if (wardrobeRecVisualEl) wardrobeRecVisualEl.dataset.wardrobeCat = cat;
+}
+
+function openWardrobeOutfitModal() {
+  const d = wardrobeCatalog[currentWardrobeCat];
+  if (!d) return;
+  if (wardrobeOutfitTitleEl) wardrobeOutfitTitleEl.textContent = d.title;
+  if (wardrobeOutfitBodyEl) wardrobeOutfitBodyEl.textContent = d.outfitDetail;
+  openModal("wardrobe-outfit");
+}
+
+function initWardrobePage() {
+  renderWardrobeRecommendation("dresses");
+  renderWardrobeItemsList();
+
+  wardrobeBackEl?.addEventListener("click", () => switchPage("home"));
+
+  wardrobeAvatarBtnEl?.addEventListener("click", () => switchPage("profile"));
+
+  wardrobeCatBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.dataset.wardrobeCat;
+      if (!cat || !wardrobeCatalog[cat]) return;
+      renderWardrobeRecommendation(cat);
+    });
+  });
+
+  wardrobeViewOutfitEl?.addEventListener("click", () => openWardrobeOutfitModal());
+
+  wardrobeItemsListEl?.addEventListener("click", (e) => {
+    const rmBtn = e.target.closest("[data-wardrobe-remove-index]");
+    if (!rmBtn || !wardrobeItemsListEl.contains(rmBtn)) return;
+    const idx = Number(rmBtn.dataset.wardrobeRemoveIndex);
+    if (Number.isFinite(idx)) removeWardrobeItemAtIndex(idx);
+  });
+
+  wardrobeAddClothesEl?.addEventListener("click", () => openModal("wardrobe-add"));
+
+  wardrobePickGalleryEl?.addEventListener("click", () => {
+    closeModal("wardrobe-add");
+    wardrobeAddInputEl?.click();
+  });
+
+  wardrobePickCameraEl?.addEventListener("click", () => {
+    closeModal("wardrobe-add");
+    wardrobeCaptureFacingMode = "user";
+    updateWardrobeFlipButtonLabel();
+    openModal("wardrobe-capture");
+    requestAnimationFrame(() => {
+      startWardrobeCapturePreview();
+    });
+  });
+
+  wardrobeCaptureFlipEl?.addEventListener("click", () => {
+    wardrobeCaptureFacingMode = wardrobeCaptureFacingMode === "user" ? "environment" : "user";
+    startWardrobeCapturePreview();
+  });
+
+  wardrobeCaptureModalEl?.addEventListener("click", (e) => {
+    if (e.target === wardrobeCaptureModalEl) closeModal("wardrobe-capture");
+  });
+
+  wardrobeCaptureCloseEl?.addEventListener("click", () => closeModal("wardrobe-capture"));
+
+  wardrobeCaptureShutterEl?.addEventListener("click", () => {
+    const video = wardrobeCaptureVideoEl;
+    if (!video?.videoWidth) {
+      showToast("请稍等画面就绪后再拍。");
+      return;
+    }
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    ctx.drawImage(video, 0, 0);
+    canvas.toBlob(
+      async (blob) => {
+        if (!blob) {
+          showToast("拍摄失败，请重试。");
+          return;
+        }
+        const file = new File([blob], `wardrobe-${Date.now()}.jpg`, { type: "image/jpeg" });
+        closeModal("wardrobe-capture");
+        await addWardrobeItemsFromFiles([file]);
+      },
+      "image/jpeg",
+      0.88
+    );
+  });
+
+  wardrobeAddInputEl?.addEventListener("change", async () => {
+    await addWardrobeItemsFromFiles(wardrobeAddInputEl.files);
+    wardrobeAddInputEl.value = "";
+  });
+}
+
+initWardrobePage();
