@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+  <div class="app-shell">
   <header class="top-header">
     <div class="header-line">
       <div class="brand-mini">
@@ -35,7 +36,8 @@
       </div>
       <div class="header-actions">
         <button class="icon-btn" data-msg="消息中心已打开">🔔</button>
-        <button class="icon-btn" data-msg="客服入口已打开">💬</button>
+        <button class="icon-btn" data-msg="客服入口已打开">🛰️</button>
+        <span class="ai-watermark">AI生成</span>
       </div>
     </div>
   </header>
@@ -63,10 +65,10 @@
 
       <article class="card">
         <div class="quick-nav">
-          <button class="quick-item" data-msg="AI 扫脸测肤已启动"><span>✨</span><em>AI扫脸测肤</em></button>
-          <button class="quick-item" data-msg="Wardrobe 电子衣柜已打开"><span>👗</span><em>Wardrobe衣柜</em></button>
+          <button class="quick-item" data-msg="AI 扫脸测肤已启动"><span>📷</span><em>AI扫脸测肤</em></button>
+          <button class="quick-item" data-msg="Wardrobe 电子衣柜已打开"><span>🛍️</span><em>Wardrobe衣柜</em></button>
           <button class="quick-item" data-msg="私密男友入口已打开"><span>💗</span><em>私密男友</em></button>
-          <button class="quick-item" data-page-jump="orders"><span>🧾</span><em>预约记录</em></button>
+          <button class="quick-item" data-page-jump="orders"><span>📅</span><em>预约记录</em></button>
         </div>
       </article>
 
@@ -234,11 +236,11 @@
   </main>
 
   <nav class="tab-bar" aria-label="底部导航">
-    <button class="tab-item active" data-page="home">首页</button>
-    <button class="tab-item" data-page="clinic">数字人面诊</button>
-    <button class="tab-item" data-page="services">全功能服务</button>
-    <button class="tab-item" data-page="orders">订单・核销</button>
-    <button class="tab-item" data-page="profile">我的</button>
+    <button class="tab-item active" data-page="home"><span>🏠</span><em>首页</em></button>
+    <button class="tab-item" data-page="clinic"><span>🧑‍⚕️</span><em>面诊</em></button>
+    <button class="tab-item" data-page="services"><span>🧩</span><em>服务</em></button>
+    <button class="tab-item" data-page="orders"><span>🧾</span><em>订单</em></button>
+    <button class="tab-item" data-page="profile"><span>👤</span><em>我的</em></button>
   </nav>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
@@ -252,5 +254,6 @@
   </div>
 
   <script src="./app.js"></script>
+  </div>
 </body>
 </html>
