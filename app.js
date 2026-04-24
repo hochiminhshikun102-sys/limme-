@@ -162,6 +162,44 @@ function appendChatBubble(text, role = "ai") {
   chatListEl.scrollTop = chatListEl.scrollHeight;
 }
 
+function setupChatAutoLoop() {
+  if (!chatListEl) return;
+
+  let timer = null;
+  let pausedUntil = 0;
+  const step = 52;
+  const intervalMs = 2200;
+
+  const tick = () => {
+    const now = Date.now();
+    if (now < pausedUntil) return;
+
+    const maxScroll = chatListEl.scrollHeight - chatListEl.clientHeight;
+    if (maxScroll <= 0) return;
+
+    if (chatListEl.scrollTop >= maxScroll - 6) {
+      chatListEl.scrollTop = 0;
+    } else {
+      chatListEl.scrollBy({ top: step, behavior: "smooth" });
+    }
+  };
+
+  timer = window.setInterval(tick, intervalMs);
+
+  const pauseLoop = () => {
+    pausedUntil = Date.now() + 5000;
+  };
+
+  chatListEl.addEventListener("mouseenter", pauseLoop);
+  chatListEl.addEventListener("mouseleave", pauseLoop);
+  chatListEl.addEventListener("touchstart", pauseLoop, { passive: true });
+  chatListEl.addEventListener("wheel", pauseLoop, { passive: true });
+
+  window.addEventListener("beforeunload", () => {
+    if (timer) window.clearInterval(timer);
+  });
+}
+
 function buildLocalReply(userText) {
   const t = userText.toLowerCase();
   if (t.includes("皮肤") || t.includes("测肤")) {
@@ -529,3 +567,4 @@ renderMallLevel1();
 renderServicePanel("health");
 setupVoiceConversation();
 setupAIConfig();
+setupChatAutoLoop();

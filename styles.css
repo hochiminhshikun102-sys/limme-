@@ -224,11 +224,24 @@ body {
   background: #fff;
   border: none;
   border-radius: 16px;
+  padding: 12px;
 }
 
 .chat-list {
   display: grid;
   gap: 14px;
+  max-height: 310px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+
+.chat-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chat-list::-webkit-scrollbar-thumb {
+  background: rgba(230, 158, 190, 0.45);
+  border-radius: 999px;
 }
 
 .bubble {
