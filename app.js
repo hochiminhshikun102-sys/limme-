@@ -10,7 +10,7 @@ const clinicTitleEl = document.getElementById("clinic-title");
 const clinicListEl = document.getElementById("clinic-list");
 const flowTitleEl = document.getElementById("flow-title");
 const flowStepsEl = document.getElementById("flow-steps");
-const avatarFallback = "https://hochiminhshikun102-sys.github.io/limme-/assets/share-logo.png?v=4";
+const avatarFallback = "./assets/share-logo.png?v=5";
 
 const clinicData = {
   beauty: {
