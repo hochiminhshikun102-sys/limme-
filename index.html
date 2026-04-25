@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=43">
+  <link rel="stylesheet" href="./styles.css?v=44">
 </head>
 <body>
   <div class="app-shell">
@@ -133,7 +133,15 @@
           <h2>内容广场</h2>
           <p class="content-plaza-lead">小说 · 漫剧 · 短剧 · 小游戏 与更多推荐</p>
         </div>
-        <div class="content-masonry" id="content-masonry" role="list"></div>
+        <div
+          class="content-masonry-scroll"
+          id="content-masonry-scroll"
+          role="region"
+          aria-label="内容瀑布流，上滑可浏览更多"
+        >
+          <div class="content-masonry" id="content-masonry" role="list"></div>
+        </div>
+        <p class="content-plaza-hint" id="content-plaza-hint">在区域内上滑，浏览更多推荐</p>
         <div class="content-plaza-dots" id="content-plaza-dots" role="tablist" aria-label="内容分区"></div>
         <button type="button" class="content-plaza-cta" id="content-plaza-watch">立即观看</button>
       </article>
@@ -942,7 +950,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=36"></script>
+  <script src="./app.js?v=37"></script>
   </div>
 </body>
 </html>

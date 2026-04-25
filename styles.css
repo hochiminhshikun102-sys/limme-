@@ -2138,14 +2138,15 @@ body {
   padding: 0 2px;
 }
 
-/* --- 首页：内容广场 / 底部瀑布流 --- */
+/* --- 首页：内容广场 / 底部瀑布流（与 --bg 淡粉一致，一屏内滚动） --- */
 #page-home .content-plaza {
   position: relative;
   margin: 12px -14px 0;
-  padding: 20px 14px 100px;
-  background: linear-gradient(165deg, #161018 0%, #221a2a 42%, #1a1420 100%);
+  padding: 18px 14px 100px;
+  background: linear-gradient(180deg, #fbf3f6 0%, var(--bg) 38%, #f5eef1 100%);
   border-radius: 22px 22px 0 0;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 -4px 18px rgba(200, 120, 150, 0.1);
+  border-top: 1px solid rgba(255, 200, 220, 0.45);
 }
 
 .content-plaza-head h2 {
@@ -2153,26 +2154,67 @@ body {
   font-size: 19px;
   font-weight: 800;
   letter-spacing: 0.06em;
-  color: #fdeef4;
+  color: var(--text);
   text-align: left;
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
 }
 
 .content-plaza-lead {
-  margin: 0 0 16px;
+  margin: 0 0 12px;
   font-size: 12px;
   line-height: 1.45;
-  color: #b5a0b0;
+  color: #7a6a72;
   text-align: left;
+}
+
+/* 仅显示约一屏高的瀑布流，向上滑动本区域可继续浏览 */
+.content-masonry-scroll {
+  max-height: min(48dvh, 380px);
+  max-height: min(48vh, 380px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  margin: 0 0 6px;
+  padding: 8px 4px 10px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(232, 200, 210, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(200, 130, 160, 0.4) transparent;
+}
+
+.content-masonry-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.content-masonry-scroll::-webkit-scrollbar-thumb {
+  background: rgba(200, 120, 150, 0.45);
+  border-radius: 999px;
 }
 
 .content-masonry {
   column-count: 2;
   column-gap: 11px;
   row-gap: 0;
-  margin: 0 0 14px;
+  margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.content-plaza-hint {
+  margin: 0 0 10px;
+  font-size: 11px;
+  line-height: 1.3;
+  text-align: center;
+  color: #9a858e;
+  transition: opacity 0.25s ease;
+}
+
+.content-plaza-hint.is-dim {
+  opacity: 0.45;
 }
 
 .plaza-tile {
@@ -2183,14 +2225,14 @@ body {
   width: 100%;
   max-width: 100%;
   margin: 0 0 11px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(230, 200, 210, 0.5);
   text-align: left;
   color: #1a1410;
-  background: #fff9fb;
+  background: #fff;
   border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 12px rgba(180, 100, 130, 0.12);
   padding: 0;
   -webkit-tap-highlight-color: transparent;
   transform: translateZ(0);
@@ -2198,7 +2240,7 @@ body {
 }
 
 .plaza-tile:hover {
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 6px 16px rgba(180, 100, 130, 0.18);
 }
 
 .plaza-tile:active {
@@ -2216,7 +2258,7 @@ body {
   position: relative;
   width: 100%;
   overflow: hidden;
-  background: #2a2230;
+  background: #f0e8ec;
 }
 
 .plaza-tile--sq .plaza-tile-imgwrap {
@@ -2294,7 +2336,7 @@ body {
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+  background: rgba(0, 0, 0, 0.12);
   transition: background 0.2s, transform 0.2s;
   cursor: pointer;
 }
@@ -2315,10 +2357,10 @@ body {
   border-radius: 999px;
   font-size: 16px;
   font-weight: 800;
-  color: #2a2228;
+  color: #fff;
   cursor: pointer;
-  background: linear-gradient(180deg, #fff3f0 0%, #e4d0d6 100%);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(180deg, #f5a0c0 0%, #e879a9 100%);
+  box-shadow: 0 4px 16px rgba(232, 120, 170, 0.35);
 }
 
 .content-plaza-cta:active {
@@ -2331,6 +2373,10 @@ body {
   }
   .plaza-tile {
     margin-bottom: 8px;
+  }
+  .content-masonry-scroll {
+    max-height: min(46dvh, 340px);
+    max-height: min(46vh, 340px);
   }
 }
 

@@ -576,6 +576,13 @@ function renderContentPlaza() {
     document.getElementById("content-plaza-watch")?.addEventListener("click", () => {
       showToast("正在为你排播，可从「服务」与会员中心管理观看记录。");
     });
+    const sc = document.getElementById("content-masonry-scroll");
+    const hint = document.getElementById("content-plaza-hint");
+    sc?.addEventListener("scroll", () => {
+      if (!hint) return;
+      const nearEnd = sc.scrollHeight - sc.scrollTop - sc.clientHeight < 12;
+      hint.classList.toggle("is-dim", sc.scrollTop > 8 || nearEnd);
+    });
   }
 }
 
