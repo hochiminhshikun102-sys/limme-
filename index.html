@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=40">
+  <link rel="stylesheet" href="./styles.css?v=41">
 </head>
 <body>
   <div class="app-shell">
@@ -548,6 +548,58 @@
       </div>
     </section>
 
+    <section id="page-tcm-nourish" class="page page-tcm-sub page-tcm-nourish" aria-label="滋补推荐">
+      <div class="tcm-sub-shell">
+        <header class="tcm-sub-hd">
+          <button type="button" class="tcm-sub-back" id="tcm-nourish-back" data-page-jump="tcmflow" aria-label="返回">‹</button>
+          <div class="tcm-sub-titles">
+            <h1 class="tcm-sub-hero tcm-sub-hero--nourish">滋补推荐</h1>
+            <p class="tcm-sub-ctx" id="tcm-nourish-ctx"></p>
+          </div>
+        </header>
+        <div class="tcm-nourish-list" id="tcm-nourish-list" role="list"></div>
+        <div class="tcm-sub-cta">
+          <button type="button" class="voice-btn tcm-pulse-btn" id="tcm-nourish-cart">
+            <span class="voice-label">加入购物车</span>
+            <svg class="voice-orbit" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="voice-track" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+              <rect class="voice-pulse" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+            </svg>
+          </button>
+          <button type="button" class="voice-btn tcm-pulse-btn tcm-pulse-btn--soft" data-page-jump="tcm-diet" id="tcm-nourish-to-diet">
+            <span class="voice-label">查看食疗方案</span>
+            <svg class="voice-orbit" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="voice-track" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+              <rect class="voice-pulse" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-tcm-diet" class="page page-tcm-sub page-tcm-diet" aria-label="食疗方案">
+      <div class="tcm-sub-shell">
+        <header class="tcm-sub-hd tcm-sub-hd--diet">
+          <button type="button" class="tcm-sub-back" data-page-jump="tcm-nourish" aria-label="返回">‹</button>
+          <div class="tcm-sub-diet-titles">
+            <h1 class="tcm-sub-hero tcm-sub-hero--diet">食疗方案</h1>
+            <p class="tcm-sub-ctx tcm-sub-ctx--diet" id="tcm-diet-ctx"></p>
+          </div>
+          <span class="tcm-sub-hd-spacer" aria-hidden="true"></span>
+        </header>
+        <div class="tcm-diet-list" id="tcm-diet-list" role="list"></div>
+        <div class="tcm-sub-cta">
+          <button type="button" class="voice-btn tcm-pulse-btn tcm-pulse-btn--soft" id="tcm-diet-save">
+            <span class="voice-label">收藏方案</span>
+            <svg class="voice-orbit" viewBox="0 0 180 64" preserveAspectRatio="none" aria-hidden="true">
+              <rect class="voice-track" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+              <rect class="voice-pulse" x="2" y="2" width="176" height="60" rx="30" ry="30"></rect>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
     <section id="page-wardrobe" class="page">
       <div class="wardrobe-shell">
         <header class="wardrobe-hero-header">
@@ -880,7 +932,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=33"></script>
+  <script src="./app.js?v=34"></script>
   </div>
 </body>
 </html>

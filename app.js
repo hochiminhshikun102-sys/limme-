@@ -6,6 +6,8 @@ const pages = [
   "profile",
   "faceflow",
   "tcmflow",
+  "tcm-nourish",
+  "tcm-diet",
   "wardrobe",
   "boyfriend",
   "health-sleep",
@@ -309,7 +311,28 @@ const TCM_PICK_INST = [
   { id: "t4", name: "和光养生馆", tag: "日常保健", rating: 4.7, img: "./assets/share-logo.png?v=6", lng: 116.433, lat: 39.93 },
   { id: "t5", name: "limme 柠美中医调理", tag: "线下面诊", rating: 4.9, img: "./assets/xiaomei-avatar.png?v=6", lng: 116.4492, lat: 39.9181 }
 ];
+
+/** 选机构/医师后，滋补推荐、食疗方案页共用的上下文字段 */
+let tcmSelectionContext = { id: "", name: "", doctor: "", source: "tcmflow" };
+
+const TCM_NOURISH_LIST = [
+  { title: "宁夏枸杞", sub: "滋补肝肾", price: 89, showScore: false, img: "./assets/share-logo.png?v=6" },
+  { title: "云衿肝肾方", sub: "滋补肝肾", price: 89, showScore: false, img: "./assets/xiaomei-avatar.png?v=6" },
+  { title: "阿胶固元糕", sub: "气血双补", price: 89, showScore: true, score: 4.8, img: "./assets/xiaomei-avatar.png?v=6" },
+  { title: "红枣桂圆饮", sub: "温补安神", price: 89, showScore: true, score: 4.8, img: "./assets/share-logo.png?v=6" },
+  { title: "百合莲子羹", sub: "润肺养心", price: 89, showScore: false, img: "./assets/xiaomei-avatar.png?v=6" }
+];
+
+const TCM_DIET_STEPS = [
+  { title: "解郁安神粥", sub: "早晚温服，一周 3 次" },
+  { title: "小米、莲子、百合", sub: "三味配伍，脾肺同调" },
+  { title: "茯苓、山药、枸杞", sub: "辅料与体质备注以面诊为准" },
+  { title: "小火慢炖 30 分钟", sub: "粥稠米烂即可，忌大火" },
+  { title: "宜忌与储存", sub: "经期与用药请遵医嘱" }
+];
+
 let _tcmPickInited = false;
+let _tcmSubPageInited = false;
 
 function getTcmPickFiltered() {
   const q = (document.getElementById("tcm-pick-search")?.value || "").trim().toLowerCase();
@@ -358,7 +381,9 @@ function renderTcmPickList() {
           /* ignore */
         }
       }
-      showToast(`已选择「${it.name}」· 可继续预约面诊与调理方案（示意）`);
+      tcmSelectionContext = { id: it.id, name: it.name, doctor: "", source: "tcmflow" };
+      switchPage("tcm-nourish");
+      renderTcmNourishPage();
     });
     list.appendChild(b);
   });
@@ -389,6 +414,88 @@ function renderTcmPickPage() {
   if (keyInp) keyInp.value = getStoredAmapKey();
   renderTcmPickList();
   setTimeout(() => tryInitTcmAmap(), 0);
+}
+
+function initTcmSubPagesOnce() {
+  if (_tcmSubPageInited) return;
+  _tcmSubPageInited = true;
+  document.getElementById("tcm-nourish-cart")?.addEventListener("click", () => {
+    showToast("已加入购物车（示意），可在「电商消费」继续结算。");
+  });
+  document.getElementById("tcm-diet-save")?.addEventListener("click", () => {
+    showToast("方案已收藏（示意），可同步到预约记录与提醒。");
+  });
+}
+
+function renderTcmNourishList() {
+  const root = document.getElementById("tcm-nourish-list");
+  if (!root) return;
+  root.innerHTML = "";
+  TCM_NOURISH_LIST.forEach((row) => {
+    const art = document.createElement("article");
+    art.className = "tcm-sup-card";
+    art.setAttribute("role", "listitem");
+    const right = row.showScore
+      ? `<span class="tcm-sup-right"><span class="tcm-sup-star" aria-hidden="true">★</span>${(row.score ?? 4.8).toFixed(1)}分</span>`
+      : `<span class="tcm-sup-right"><span class="tcm-sup-yuan" aria-hidden="true">¥</span>${row.price}</span>`;
+    art.innerHTML = `
+      <div class="tcm-sup-av">
+        <img src="${row.img}" alt="" loading="lazy" onerror="this.onerror=null;this.src='${avatarFallback}'" />
+      </div>
+      <div class="tcm-sup-mid">
+        <h3 class="tcm-sup-title">${row.title}</h3>
+        <p class="tcm-sup-sub">${row.sub}</p>
+      </div>
+      ${right}
+    `;
+    root.appendChild(art);
+  });
+}
+
+function renderTcmDietList() {
+  const root = document.getElementById("tcm-diet-list");
+  if (!root) return;
+  root.innerHTML = "";
+  TCM_DIET_STEPS.forEach((row) => {
+    const art = document.createElement("article");
+    art.className = "tcm-diet-card";
+    art.setAttribute("role", "listitem");
+    art.innerHTML = `
+      <div class="tcm-diet-av tcm-diet-av--food" aria-hidden="true"></div>
+      <div class="tcm-diet-mid">
+        <h3 class="tcm-diet-title">${row.title}</h3>
+        <p class="tcm-diet-sub">${row.sub}</p>
+      </div>
+      <span class="tcm-diet-rating" aria-label="推荐 4.8 分"><span class="tcm-diet-star" aria-hidden="true">★</span>4.8分</span>
+    `;
+    root.appendChild(art);
+  });
+}
+
+function renderTcmNourishPage() {
+  initTcmSubPagesOnce();
+  const ctx = document.getElementById("tcm-nourish-ctx");
+  if (ctx) {
+    const a = tcmSelectionContext.name || "机构";
+    const b = tcmSelectionContext.doctor;
+    ctx.textContent = b ? `根据「${a}」· ${b} 的调理方向推荐` : `根据「${a}」为您搭配`;
+  }
+  const back = document.getElementById("tcm-nourish-back");
+  if (back) {
+    back.setAttribute("data-page-jump", tcmSelectionContext.source === "clinic" ? "clinic" : "tcmflow");
+  }
+  renderTcmNourishList();
+}
+
+function renderTcmDietPage() {
+  initTcmSubPagesOnce();
+  const ctx = document.getElementById("tcm-diet-ctx");
+  if (ctx) {
+    const a = tcmSelectionContext.name || "机构";
+    const b = tcmSelectionContext.doctor;
+    ctx.textContent = b ? `${a} · ${b} · 七日食疗` : `${a} · 七日食疗`;
+  }
+  renderTcmDietList();
 }
 
 function showToast(message) {
@@ -1336,6 +1443,8 @@ function switchPage(pageName) {
   else if (pageName === "homecare") renderHomecarePage();
   else if (pageName === "yoga") renderYogaPage();
   else if (pageName === "tcmflow") renderTcmPickPage();
+  else if (pageName === "tcm-nourish") renderTcmNourishPage();
+  else if (pageName === "tcm-diet") renderTcmDietPage();
   if (pageName !== "yoga") {
     destroyYogaMap();
   }
@@ -1612,10 +1721,22 @@ function renderClinic(type) {
       <p>${item.meta}</p>
       <p>${item.doctor}</p>
       <div class="actions">
+        ${
+          type === "mind"
+            ? `<button type="button" class="btn btn-tcm-mind-pick">选此机构 · 滋补与食疗</button>`
+            : ""
+        }
         <button class="btn" data-open-flow-page="${type === "mind" ? "tcmflow" : "faceflow"}">进入面诊</button>
         <button class="btn" data-msg="已打开 ${item.name} 方案页">查看方案</button>
       </div>
     `;
+    if (type === "mind") {
+      row.querySelector(".btn-tcm-mind-pick")?.addEventListener("click", () => {
+        tcmSelectionContext = { id: "", name: item.name, doctor: item.doctor, source: "clinic" };
+        switchPage("tcm-nourish");
+        renderTcmNourishPage();
+      });
+    }
     row.querySelectorAll("[data-msg]").forEach((btn) => {
       btn.addEventListener("click", () => showToast(btn.dataset.msg));
     });
