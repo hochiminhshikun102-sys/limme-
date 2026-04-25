@@ -1,54 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220" role="img" aria-label="Invite besties illustration">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 220" role="img" aria-label="Invite besties minimalist">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#fff2f7"/>
-      <stop offset="60%" stop-color="#fff9fc"/>
-      <stop offset="100%" stop-color="#fff0f7"/>
+      <stop offset="0%" stop-color="#fff5f9"/>
+      <stop offset="65%" stop-color="#fffbfd"/>
+      <stop offset="100%" stop-color="#fff4f9"/>
     </linearGradient>
-    <linearGradient id="dressLight" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#fffefe"/>
-      <stop offset="100%" stop-color="#f8eef4"/>
-    </linearGradient>
-    <linearGradient id="dressPink" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#ffd8e9"/>
-      <stop offset="100%" stop-color="#f4a7c7"/>
+    <linearGradient id="pinkDress" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffd5e8"/>
+      <stop offset="100%" stop-color="#f6b4d3"/>
     </linearGradient>
     <style>
-      .line { stroke: #5b4b53; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-      .soft { stroke: #836f79; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .s { stroke: #6f616b; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+      .s2 { stroke: #8d8089; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; fill: none; }
     </style>
   </defs>
 
-  <rect width="360" height="220" rx="24" fill="url(#bg)"/>
-  <circle cx="292" cy="42" r="22" fill="#ffd8e8" opacity="0.55"/>
-  <path d="M0 185 C80 165 145 163 210 178 C275 192 330 194 360 184" fill="#fce6f0"/>
+  <rect width="360" height="220" rx="22" fill="url(#bg)"/>
+  <path d="M0 205 C60 193 140 190 205 200 C270 210 320 208 360 202 L360 220 L0 220 Z" fill="#ffeaf3"/>
 
-  <!-- left girl -->
-  <ellipse cx="124" cy="55" rx="16" ry="18" fill="#ffe7d8"/>
-  <path d="M108 55 C106 42 118 31 134 33 C148 35 154 50 150 63 C143 56 134 55 121 58 Z" fill="#5b3f42"/>
-  <path d="M110 69 C95 82 90 100 87 120 C84 143 82 168 80 197 L162 197 C159 161 157 144 152 121 C147 98 140 82 126 69 Z" fill="url(#dressLight)"/>
-  <path d="M108 88 C121 95 139 95 152 88" class="soft"/>
-  <path d="M120 71 L117 90" class="line"/>
-  <path d="M140 71 L143 90" class="line"/>
-  <path d="M104 104 C95 108 90 120 89 132" class="soft"/>
-  <path d="M156 104 C165 108 170 120 171 132" class="soft"/>
-  <path d="M123 60 q2 2 4 0" class="soft"/>
+  <!-- left figure -->
+  <path d="M104 48 C102 36 112 28 127 28 C141 28 151 35 149 48 L149 62 C141 58 134 57 126 57 C118 57 111 58 104 62 Z" fill="#4b3b44"/>
+  <ellipse cx="126" cy="60" rx="12" ry="11" fill="#ffe9df"/>
+  <path d="M75 220 L164 220 C162 196 160 166 156 145 C152 124 144 109 128 100 C112 109 103 124 99 145 C95 166 93 196 91 220 Z" fill="#fffefe"/>
+  <path d="M104 80 C117 86 139 86 152 80" class="s"/>
+  <path d="M116 63 L113 82" class="s"/>
+  <path d="M136 63 L139 82" class="s"/>
+  <path d="M105 114 C96 120 90 132 89 148" class="s2"/>
+  <path d="M152 114 C161 120 167 132 168 148" class="s2"/>
 
-  <!-- right girl -->
-  <ellipse cx="236" cy="55" rx="16" ry="18" fill="#ffe7d8"/>
-  <path d="M221 58 C217 40 232 29 248 32 C262 35 269 51 264 66 C255 59 245 58 233 60 Z" fill="#4c3941"/>
-  <path d="M219 70 C205 84 200 102 197 124 C194 146 193 169 192 197 L274 197 C271 164 268 146 263 123 C258 101 252 84 239 70 Z" fill="url(#dressPink)"/>
-  <path d="M219 90 C232 96 252 96 265 90" class="soft"/>
-  <path d="M230 72 L227 91" class="line"/>
-  <path d="M250 72 L253 91" class="line"/>
-  <path d="M214 106 C205 111 201 121 199 133" class="soft"/>
-  <path d="M268 106 C277 111 281 121 283 133" class="soft"/>
-  <circle cx="263" cy="53" r="7" fill="#4c3941"/>
+  <!-- right figure -->
+  <path d="M216 48 C214 36 224 28 239 28 C255 28 265 35 263 48 L263 62 C255 58 248 57 240 57 C232 57 225 58 216 62 Z" fill="#443943"/>
+  <ellipse cx="240" cy="60" rx="12" ry="11" fill="#ffe9df"/>
+  <circle cx="265" cy="53" r="7" fill="#443943"/>
+  <path d="M186 220 L275 220 C273 195 272 166 267 144 C262 123 254 109 240 100 C224 109 216 124 211 145 C206 166 204 196 202 220 Z" fill="url(#pinkDress)"/>
+  <path d="M216 80 C229 86 251 86 264 80" class="s"/>
+  <path d="M228 63 L225 82" class="s"/>
+  <path d="M248 63 L251 82" class="s"/>
+  <path d="M214 116 C205 121 199 133 198 149" class="s2"/>
+  <path d="M266 116 C274 121 280 133 281 149" class="s2"/>
 
-  <!-- hands -->
-  <path d="M153 123 C165 126 174 130 180 137" class="line"/>
-  <path d="M206 123 C194 126 186 130 180 137" class="line"/>
-  <ellipse cx="180" cy="137" rx="9" ry="7" fill="#ffe7d8" stroke="#5b4b53" stroke-width="1.8"/>
+  <!-- holding hands -->
+  <path d="M154 148 C164 151 172 156 176 162" class="s"/>
+  <path d="M204 148 C194 151 186 156 182 162" class="s"/>
+  <ellipse cx="179" cy="163" rx="8.5" ry="7" fill="#ffe9df" stroke="#6f616b" stroke-width="2"/>
 
-  <path d="M303 33c7-10 23-7 23 6 0 12-13 21-23 29-10-8-23-17-23-29 0-13 16-16 23-6z" fill="#ffb7d6" opacity="0.9"/>
+  <path d="M307 44 C314 34 329 37 333 48 C337 59 327 67 316 75 C305 67 294 59 298 48 C301 37 316 34 323 44 Z" fill="#ffb8d8"/>
 </svg>

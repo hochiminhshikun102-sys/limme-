@@ -1993,7 +1993,7 @@ function refreshProfilePage() {
   invalidateInvitePosterCache();
   const rewardEl = document.getElementById("profile-invite-reward");
   if (rewardEl) {
-    rewardEl.textContent = `成功邀请每位闺蜜可得 200 积分（示意）· 你已邀请 ${inv.invited} 位，累计 ${inv.points} 积分`;
+    rewardEl.textContent = `成功邀请享 ${inv.points || "XX"} 积分`;
   }
   const pv = document.getElementById("profile-stat-points-val");
   if (pv) pv.textContent = String(inv.points);

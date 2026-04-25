@@ -5347,6 +5347,8 @@ button.pickgoods-result-row.result-item {
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  background: #fff;
   border: none;
   box-shadow: none;
 }
@@ -5373,8 +5375,9 @@ button.pickgoods-result-row.result-item {
 }
 
 .profile-share-ico--chat .profile-share-svg {
-  fill: #111;
+  fill: #fff;
   stroke: #111;
+  stroke-width: 1.8;
 }
 
 .profile-share-badge {
@@ -5386,7 +5389,7 @@ button.pickgoods-result-row.result-item {
 }
 
 .profile-invite-reward {
-  font-size: 15px;
+  font-size: 16px;
   color: #3b3138;
   font-weight: 700;
 }
