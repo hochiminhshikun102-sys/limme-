@@ -5344,49 +5344,21 @@ button.pickgoods-result-row.result-item {
 .profile-share-ico {
   width: 52px;
   height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   box-shadow: none;
 }
 
-.profile-share-inner {
-  position: relative;
-  width: 34px;
-  height: 34px;
-  background: transparent;
-}
-
-.profile-share-inner--wx::before,
-.profile-share-inner--wx::after {
-  content: "";
-  position: absolute;
-  border-radius: 50%;
-  background: #111;
-}
-
-.profile-share-inner--wx::before {
-  width: 22px;
-  height: 18px;
-  left: 0;
-  top: 8px;
-}
-
-.profile-share-inner--wx::after {
-  width: 20px;
-  height: 16px;
-  right: 0;
-  top: 2px;
-}
-
-.profile-share-inner--moments {
-  border: 3px solid #111;
-  border-radius: 12px;
-}
-
-.profile-share-inner--msg {
-  background: #111;
-  border-radius: 8px;
-  width: 30px;
-  height: 22px;
+.profile-share-svg {
+  width: 32px;
+  height: 32px;
+  fill: #111;
+  stroke: #111;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .profile-share-badge {
