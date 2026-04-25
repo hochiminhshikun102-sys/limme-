@@ -2244,6 +2244,12 @@ body {
   display: block;
 }
 
+/* 主列表后补位卡片：略作区分，避免像「缺图空白」 */
+.plaza-tile--tail {
+  border-color: rgba(240, 160, 195, 0.55);
+  background: linear-gradient(180deg, #fff 0%, #fff9fc 100%);
+}
+
 .plaza-tile-imgwrap {
   position: relative;
   width: 100%;

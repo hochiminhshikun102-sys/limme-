@@ -520,6 +520,15 @@ const CONTENT_PLAZA_TILES = [
   { cat: "播客", title: "情感夜话", shape: "sq", seed: "plazaP1" }
 ];
 
+/** 主列表后追加一条，落向较短列，减轻底部单侧大块留白 */
+const PLAZA_EXTRA_TAIL = {
+  cat: "发现",
+  title: "每日更新，上滑看更多好内容",
+  shape: "tall",
+  seed: "plazaFiller1",
+  tail: true
+};
+
 let _plazaWired = false;
 
 function refreshPlazaPageHint() {
@@ -544,6 +553,39 @@ function shufflePlazaList(arr) {
   return a;
 }
 
+function makePlazaTileElement(item) {
+  const sz =
+    item.shape === "sq"
+      ? { w: 400, h: 400, cls: "plaza-tile--sq" }
+      : item.shape === "tall"
+        ? { w: 400, h: 500, cls: "plaza-tile--tall" }
+        : { w: 400, h: 280, cls: "plaza-tile--wide" };
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = `plaza-tile ${sz.cls}${item.tail ? " plaza-tile--tail" : ""}`;
+  b.setAttribute("aria-label", item.tail ? `${item.title}，${item.cat}更多推荐` : `${item.title}，${item.cat}，评分约 4.8`);
+  b.innerHTML = `
+    <div class="plaza-tile-imgwrap">
+      <img src="${plazaPicsum(item.seed, sz.w, sz.h)}" alt="" width="${sz.w}" height="${sz.h}" loading="lazy" decoding="async" />
+    </div>
+    <div class="plaza-tile-body">
+      <div class="plaza-tile-row1">
+        <span class="plaza-tile-cat">${item.cat}</span>
+        <span class="plaza-tile-rating" aria-hidden="true">★4.8分</span>
+      </div>
+      <p class="plaza-tile-title">${item.title}</p>
+    </div>
+  `;
+  b.addEventListener("click", () => {
+    if (item.tail) {
+      showToast("更多好内容已在路上（接入投放后可按兴趣为你刷新）");
+    } else {
+      showToast(`已打开「${item.title}」· ${item.cat}（内容示意，可接投放与埋点）`);
+    }
+  });
+  return b;
+}
+
 function renderContentPlaza() {
   const root = document.getElementById("content-masonry");
   if (!root) return;
@@ -564,33 +606,10 @@ function renderContentPlaza() {
     (a <= b ? col0 : col1).appendChild(node);
   };
   list.forEach((item) => {
-    const sz =
-      item.shape === "sq"
-        ? { w: 400, h: 400, cls: "plaza-tile--sq" }
-        : item.shape === "tall"
-          ? { w: 400, h: 500, cls: "plaza-tile--tall" }
-          : { w: 400, h: 280, cls: "plaza-tile--wide" };
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = `plaza-tile ${sz.cls}`;
-    b.setAttribute("aria-label", `${item.title}，${item.cat}，评分约 4.8`);
-    b.innerHTML = `
-      <div class="plaza-tile-imgwrap">
-        <img src="${plazaPicsum(item.seed, sz.w, sz.h)}" alt="" width="${sz.w}" height="${sz.h}" loading="lazy" decoding="async" />
-      </div>
-      <div class="plaza-tile-body">
-        <div class="plaza-tile-row1">
-          <span class="plaza-tile-cat">${item.cat}</span>
-          <span class="plaza-tile-rating" aria-hidden="true">★4.8分</span>
-        </div>
-        <p class="plaza-tile-title">${item.title}</p>
-      </div>
-    `;
-    b.addEventListener("click", () => {
-      showToast(`已打开「${item.title}」· ${item.cat}（内容示意，可接投放与埋点）`);
-    });
-    appendToShorter(b);
+    appendToShorter(makePlazaTileElement(item));
   });
+  /** 主列表后补一条，优先填满较短列的底部 */
+  appendToShorter(makePlazaTileElement(PLAZA_EXTRA_TAIL));
   const dots = document.getElementById("content-plaza-dots");
   if (dots) {
     dots.innerHTML = ["小说", "漫剧", "短剧", "更多"]
