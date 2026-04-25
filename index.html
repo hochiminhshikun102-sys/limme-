@@ -25,7 +25,7 @@
   <link rel="icon" href="./assets/share-logo.png?v=3">
   <link rel="apple-touch-icon" href="./assets/share-logo.png?v=3">
   <title>limme柠美</title>
-  <link rel="stylesheet" href="./styles.css?v=52">
+  <link rel="stylesheet" href="./styles.css?v=53">
 </head>
 <body>
   <div class="app-shell">
@@ -482,7 +482,7 @@
                   <p class="pickgoods-hero-name" id="pickgoods-hero-name">严选玫瑰香氛礼盒 · 限量</p>
                   <div class="pickgoods-hero-row">
                     <span class="pickgoods-hero-price" id="pickgoods-hero-price">¥ 1899</span>
-                    <button type="button" class="pickgoods-compare-btn" id="pickgoods-compare-btn">比价</button>
+                    <button type="button" class="pickgoods-compare-btn" id="pickgoods-compare-btn">全网比价</button>
                   </div>
                 </div>
               </div>
@@ -900,6 +900,19 @@
     </div>
   </div>
 
+  <div class="modal" id="modal-pickgoods-compare" aria-hidden="true">
+    <div class="modal-content pickgoods-compare-modal">
+      <h3 id="pickgoods-compare-heading">全网比价</h3>
+      <div class="pickgoods-compare-product" id="pickgoods-compare-product"></div>
+      <p class="pickgoods-compare-caption">主流电商平台到手价对比（示意数据，可接开放平台与爬虫合规接口）</p>
+      <ul class="pickgoods-compare-list" id="pickgoods-compare-list" role="list"></ul>
+      <p class="pickgoods-compare-foot muted" id="pickgoods-compare-summary"></p>
+      <div class="actions">
+        <button type="button" class="btn btn-close" data-close="pickgoods-compare">关闭</button>
+      </div>
+    </div>
+  </div>
+
   <div class="modal" id="modal-yoga-book" aria-hidden="true">
     <div class="modal-content yoga-book-modal">
       <div class="yoga-book-head">
@@ -975,7 +988,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=45"></script>
+  <script src="./app.js?v=46"></script>
   </div>
 </body>
 </html>

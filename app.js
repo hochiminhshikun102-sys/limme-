@@ -137,53 +137,53 @@ const clinicData = {
 const mallTree = {
   化妆品: {
     面部彩妆: [
-      { name: "丝绒雾面唇釉礼盒", price: "¥268" },
-      { name: "养肤粉底液 30ml", price: "¥189" },
-      { name: "四色眼影盘", price: "¥158" }
+      { name: "丝绒雾面唇釉礼盒", price: "¥268", ico: "💋" },
+      { name: "养肤粉底液 30ml", price: "¥189", ico: "🧴" },
+      { name: "四色眼影盘", price: "¥158", ico: "🎨" }
     ],
     卸妆洁面: [
-      { name: "温和卸妆膏 100g", price: "¥99" },
-      { name: "氨基酸洁面慕斯", price: "¥79" }
+      { name: "温和卸妆膏 100g", price: "¥99", ico: "🫧" },
+      { name: "氨基酸洁面慕斯", price: "¥79", ico: "🧼" }
     ]
   },
   保健品: {
     维生素: [
-      { name: "复合维生素软糖", price: "¥128" },
-      { name: "维D3+钙嚼片", price: "¥96" }
+      { name: "复合维生素软糖", price: "¥128", ico: "💊" },
+      { name: "维D3+钙嚼片", price: "¥96", ico: "🦴" }
     ],
     益生菌: [
-      { name: "女性益生菌 30条", price: "¥219" },
-      { name: "肠道益生元粉", price: "¥168" }
+      { name: "女性益生菌 30条", price: "¥219", ico: "🫘" },
+      { name: "肠道益生元粉", price: "¥168", ico: "🌿" }
     ]
   },
   护肤品: {
     面部护理: [
-      { name: "修护精华", price: "¥199" },
-      { name: "补水面膜", price: "¥79" }
+      { name: "修护精华", price: "¥199", ico: "✨" },
+      { name: "补水面膜", price: "¥79", ico: "💧" }
     ],
     防晒专区: [
-      { name: "轻薄防晒乳", price: "¥129" },
-      { name: "敏感肌防晒", price: "¥159" }
+      { name: "轻薄防晒乳", price: "¥129", ico: "☀️" },
+      { name: "敏感肌防晒", price: "¥159", ico: "🌤️" }
     ]
   },
   周边好物: {
     美容仪: [
-      { name: "射频导入仪", price: "¥599" },
-      { name: "眼部按摩仪", price: "¥269" }
+      { name: "射频导入仪", price: "¥599", ico: "📳" },
+      { name: "眼部按摩仪", price: "¥269", ico: "👁️" }
     ],
     香氛蜡烛: [
-      { name: "舒缓助眠香氛", price: "¥99" },
-      { name: "木质调香氛", price: "¥109" }
+      { name: "舒缓助眠香氛", price: "¥99", ico: "🕯️" },
+      { name: "木质调香氛", price: "¥109", ico: "🪵" }
     ]
   },
   养护品: {
     中式养生: [
-      { name: "红枣桂圆饮", price: "¥49" },
-      { name: "阿胶固元糕", price: "¥69" }
+      { name: "红枣桂圆饮", price: "¥49", ico: "🫖" },
+      { name: "阿胶固元糕", price: "¥69", ico: "🍯" }
     ],
     功能补剂: [
-      { name: "胶原蛋白粉", price: "¥139" },
-      { name: "益生菌组合", price: "¥118" }
+      { name: "胶原蛋白粉", price: "¥139", ico: "🥛" },
+      { name: "益生菌组合", price: "¥118", ico: "🧬" }
     ]
   }
 };
@@ -196,6 +196,7 @@ const PICKGOODS_SPOTLIGHTS = [
     chip: "唇釉礼盒",
     title: "丝绒雾面唇釉礼盒 · 三支装",
     price: "¥ 268",
+    ico: "💋",
     seed: "limmSpotLip",
     level1: "化妆品",
     level2: "面部彩妆",
@@ -207,6 +208,7 @@ const PICKGOODS_SPOTLIGHTS = [
     chip: "维生素软糖",
     title: "复合维生素软糖 · 60 粒装",
     price: "¥ 128",
+    ico: "💊",
     seed: "limmSpotVc",
     level1: "保健品",
     level2: "维生素",
@@ -218,6 +220,7 @@ const PICKGOODS_SPOTLIGHTS = [
     chip: "修护精华",
     title: "修护精华 · 熬夜急救",
     price: "¥ 199",
+    ico: "✨",
     seed: "limmSpotSerum",
     level1: "护肤品",
     level2: "面部护理",
@@ -229,6 +232,7 @@ const PICKGOODS_SPOTLIGHTS = [
     chip: "美容仪",
     title: "射频导入仪 · 入门款",
     price: "¥ 599",
+    ico: "📳",
     seed: "limmSpotDev",
     level1: "周边好物",
     level2: "美容仪",
@@ -240,11 +244,21 @@ const PICKGOODS_SPOTLIGHTS = [
     chip: "阿胶糕",
     title: "阿胶固元糕 · 小包装",
     price: "¥ 69",
+    ico: "🍯",
     seed: "limmSpotJelly",
     level1: "养护品",
     level2: "中式养生",
     compareBlurb: "产地与批次可查，支持「假一赔三」示意条款"
   }
+];
+
+/** 全网比价弹层：主流电商示意价（与严选到手价对比） */
+const PICKGOODS_COMPARE_PLATFORMS = [
+  { id: "tmall", label: "天猫", tag: "淘宝天猫", color: "#ff5000" },
+  { id: "jd", label: "京东", tag: "自营/旗舰店", color: "#e4393c" },
+  { id: "pdd", label: "拼多多", tag: "百亿补贴", color: "#e02e24" },
+  { id: "douyin", label: "抖音商城", tag: "品牌店", color: "#161823" },
+  { id: "vip", label: "唯品会", tag: "特卖", color: "#c71220" }
 ];
 
 const flowData = {
@@ -1996,6 +2010,119 @@ function renderMallLevel2(preferredLevel2 = null) {
   renderMallResults();
 }
 
+function parsePriceYuan(val) {
+  const m = String(val).match(/(\d+)/);
+  return m ? parseInt(m[1], 10) : 0;
+}
+
+function hashPickgoodsString(str) {
+  let h = 2166136261;
+  const s = String(str);
+  for (let i = 0; i < s.length; i += 1) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+function buildPickgoodsCompareRows(limmeYuan, nameSeed) {
+  const h = hashPickgoodsString(nameSeed);
+  const muls = [1.14, 1.07, 0.93, 1.2, 1.04];
+  const platforms = PICKGOODS_COMPARE_PLATFORMS.map((p, i) => {
+    const raw = limmeYuan * muls[i] + (((h >> (i * 5)) & 15) - 7) * 2;
+    const priceYuan = Math.max(1, Math.round(raw));
+    return { kind: "plat", ...p, priceYuan };
+  });
+  const limmeRow = {
+    kind: "limme",
+    id: "limme",
+    label: "limme 今日严选",
+    tag: "到手含运费险",
+    color: "#f47fa8",
+    priceYuan: limmeYuan
+  };
+  const rows = [limmeRow, ...platforms];
+  const minP = Math.min(...rows.map((r) => r.priceYuan));
+  rows.forEach((r) => {
+    r.isLowest = r.priceYuan === minP;
+  });
+  return rows;
+}
+
+function getPickgoodsHeroCompareProduct() {
+  if (pickgoodsCurSpot) {
+    return {
+      name: pickgoodsCurSpot.title,
+      price: pickgoodsCurSpot.price,
+      ico: pickgoodsCurSpot.ico || "🛍️"
+    };
+  }
+  const level1 = mallLevel1El?.value;
+  const level2 = mallLevel2El?.value;
+  const pick = mallTree[level1]?.[level2]?.[0];
+  if (pick) {
+    return { name: pick.name, price: pick.price, ico: pick.ico || "📦" };
+  }
+  return { name: "严选好物", price: "¥1899", ico: "🛍️" };
+}
+
+function openPickgoodsCompareModal(product) {
+  const name = product?.name || "当前商品";
+  const ico = product?.ico || "📦";
+  const limmeYuan = parsePriceYuan(product?.price || "0");
+  if (limmeYuan <= 0) {
+    showToast("暂无有效价格，无法比价（示意）");
+    return;
+  }
+  const listEl = document.getElementById("pickgoods-compare-list");
+  const prodEl = document.getElementById("pickgoods-compare-product");
+  const sumEl = document.getElementById("pickgoods-compare-summary");
+  if (!listEl || !prodEl || !sumEl) return;
+  prodEl.innerHTML = `<span class="pickgoods-compare-ico" aria-hidden="true">${ico}</span><div class="pickgoods-compare-name-wrap"><strong class="pickgoods-compare-name">${name}</strong><span class="pickgoods-compare-ref">严选参考价 ¥${limmeYuan}</span></div>`;
+  const rows = buildPickgoodsCompareRows(limmeYuan, name);
+  listEl.innerHTML = "";
+  rows.forEach((row) => {
+    const li = document.createElement("li");
+    li.className = `pickgoods-compare-li${row.isLowest ? " is-lowest" : ""}`;
+    li.setAttribute("role", "listitem");
+    const priceStr = `¥ ${row.priceYuan}`;
+    const badge = row.isLowest
+      ? `<span class="pickgoods-compare-badge">当前最低</span>`
+      : `<span class="pickgoods-compare-badge pickgoods-compare-badge--empty" aria-hidden="true"></span>`;
+    const platKey = row.kind === "limme" ? "limme" : row.id;
+    li.innerHTML = `
+      <div class="pickgoods-compare-li-top">
+        <span class="pickgoods-compare-dot" style="background:${row.color}" aria-hidden="true"></span>
+        <div class="pickgoods-compare-mid">
+          <span class="pickgoods-compare-plat">${row.label}</span>
+          <span class="pickgoods-compare-tag">${row.tag || ""}</span>
+        </div>
+        <span class="pickgoods-compare-yuan">${priceStr}</span>
+        ${badge}
+      </div>
+      <div class="pickgoods-compare-li-bot">
+        <button type="button" class="pickgoods-compare-goto" data-plat="${platKey}">去逛逛</button>
+      </div>
+    `;
+    li.querySelector(".pickgoods-compare-goto")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (row.kind === "limme") {
+        showToast("将打开站内严选详情与保障说明（示意）");
+      } else {
+        showToast(`将跳转「${row.label}」搜索同款（示意 · 可接平台开放平台 / H5 店铺）`);
+      }
+    });
+    listEl.appendChild(li);
+  });
+  const lowest = rows.find((r) => r.isLowest);
+  if (lowest?.kind === "limme") {
+    sumEl.textContent = "当前 limme 严选到手价为对比中的最低价（示意）；含运费险与正品溯源。";
+  } else {
+    sumEl.textContent = `「${lowest?.label}」展示价 ¥${lowest?.priceYuan}，与严选 ¥${limmeYuan} 对比时请核对券后实付、运费与售后条款（示意）。`;
+  }
+  openModal("pickgoods-compare");
+}
+
 function pickgoodsHeroImageSeed(level1, level2, productName) {
   const raw = `pg-${level1}-${level2}-${productName || "x"}`;
   return raw.replace(/\s+/g, "").slice(0, 48);
@@ -2097,14 +2224,18 @@ function renderMallResults() {
     const row = document.createElement("button");
     row.type = "button";
     row.className = "result-item pickgoods-result-row";
-    row.setAttribute("aria-label", `${item.name}，${item.price}，加入比价`);
+    row.setAttribute("aria-label", `${item.name}，${item.price}，打开全网比价`);
+    const ico = item.ico || "📦";
     row.innerHTML = `
-      <strong>${item.name}</strong>
-      <p class="price">${item.price}</p>
-      <span class="pickgoods-result-cta">加入比价</span>
+      <span class="pickgoods-result-ico" aria-hidden="true">${ico}</span>
+      <div class="pickgoods-result-main">
+        <strong>${item.name}</strong>
+        <p class="price">${item.price}</p>
+      </div>
+      <span class="pickgoods-result-cta">全网比价</span>
     `;
     row.addEventListener("click", () => {
-      showToast(`「${item.name}」已加入 AI 比价清单（示意，可接购物车）`);
+      openPickgoodsCompareModal(item);
     });
     mallResultsEl.appendChild(row);
   });
@@ -2117,7 +2248,7 @@ function setupPickgoodsUiOnce() {
   _pickgoodsUiWired = true;
   renderPickgoodsSpotStrip();
   document.getElementById("pickgoods-search-btn")?.addEventListener("click", () => {
-    showToast("可输入品牌或品类，AI 将全网比价后返回（示意）");
+    openPickgoodsCompareModal(getPickgoodsHeroCompareProduct());
   });
   document.getElementById("pickgoods-bag-btn")?.addEventListener("click", () => {
     showToast("购物袋 · 已选严选与比价清单（示意）");
@@ -2129,13 +2260,7 @@ function setupPickgoodsUiOnce() {
     showToast(`下一件严选：${next.chip}`);
   });
   document.getElementById("pickgoods-compare-btn")?.addEventListener("click", () => {
-    const s = pickgoodsCurSpot;
-    if (s?.compareBlurb) {
-      showToast(`${s.title}｜${s.compareBlurb}`);
-    } else {
-      const name = document.getElementById("pickgoods-hero-name")?.textContent || "当前商品";
-      showToast(`「${name}」多平台比价已发起（示意）`);
-    }
+    openPickgoodsCompareModal(getPickgoodsHeroCompareProduct());
   });
   if (PICKGOODS_SPOTLIGHTS[0]) {
     applyPickgoodsSpotlight(PICKGOODS_SPOTLIGHTS[0]);

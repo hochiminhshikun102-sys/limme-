@@ -1866,7 +1866,7 @@ body {
 }
 
 .pickgoods-result-grid .result-item .price {
-  margin-top: 8px;
+  margin-top: 6px;
   font-size: 15px;
   font-weight: 800;
   color: #e02020;
@@ -1876,18 +1876,210 @@ button.pickgoods-result-row.result-item {
   width: 100%;
   font: inherit;
   text-align: left;
-  position: relative;
-  padding-bottom: 28px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 12px;
+}
+
+.pickgoods-result-ico {
+  flex-shrink: 0;
+  font-size: 30px;
+  line-height: 1;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: linear-gradient(165deg, #fff8fb 0%, #f5eef2 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 210, 225, 0.5);
+}
+
+.pickgoods-result-main {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+}
+
+.pickgoods-result-main strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.35;
 }
 
 .pickgoods-result-cta {
-  position: absolute;
-  right: 12px;
-  bottom: 10px;
+  flex-shrink: 0;
+  align-self: center;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
   color: #f47fa8;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  padding: 6px 8px;
+  border-radius: 10px;
+  background: rgba(244, 127, 168, 0.1);
+}
+
+/* 全网比价弹层 */
+.pickgoods-compare-modal {
+  max-height: min(78vh, 560px);
+  overflow-y: auto;
+}
+
+.pickgoods-compare-product {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff8fb 0%, #ffffff 100%);
+  border: 1px solid rgba(255, 210, 225, 0.55);
+}
+
+.pickgoods-compare-ico {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.pickgoods-compare-name-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+.pickgoods-compare-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 800;
+  color: #1f1a1a;
+  line-height: 1.35;
+}
+
+.pickgoods-compare-ref {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #e02020;
+}
+
+.pickgoods-compare-caption {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #8a7a82;
+  margin-bottom: 10px;
+}
+
+.pickgoods-compare-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pickgoods-compare-li {
+  padding: 10px 12px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(232, 220, 228, 0.9);
+  background: #fff;
+}
+
+.pickgoods-compare-li.is-lowest {
+  border-color: rgba(244, 127, 168, 0.65);
+  background: linear-gradient(135deg, #fffafd 0%, #ffffff 100%);
+  box-shadow: 0 2px 12px rgba(244, 127, 168, 0.12);
+}
+
+.pickgoods-compare-li-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.pickgoods-compare-dot {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+}
+
+.pickgoods-compare-mid {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.pickgoods-compare-plat {
+  font-size: 14px;
+  font-weight: 800;
+  color: #2a2026;
+}
+
+.pickgoods-compare-tag {
+  font-size: 11px;
+  color: #8a7a82;
+}
+
+.pickgoods-compare-yuan {
+  font-size: 15px;
+  font-weight: 800;
+  color: #e02020;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pickgoods-compare-badge {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(90deg, #ff8fb8, #f47fa8);
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.pickgoods-compare-badge--empty {
+  visibility: hidden;
+  width: 72px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.pickgoods-compare-li-bot {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.pickgoods-compare-goto {
+  border: 1px solid rgba(244, 127, 168, 0.45);
+  background: #fff;
+  color: #f47fa8;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pickgoods-compare-li.is-lowest .pickgoods-compare-goto {
+  border-color: rgba(244, 127, 168, 0.75);
+}
+
+.pickgoods-compare-foot {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 @media (max-width: 360px) {
